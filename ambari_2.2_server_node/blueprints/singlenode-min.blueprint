@@ -1,0 +1,91 @@
+{
+    "configurations" : [
+      {
+        "hive-site": {
+          "javax.jdo.option.ConnectionPassword": "hive"
+        }
+      }
+    ],
+    "host_groups" : [
+        {
+            "name" : "all",
+            "components" : [
+                {
+                    "name" : "PIG"
+                },
+                {
+                    "name" : "HISTORYSERVER"
+                },
+                {
+                    "name" : "NAMENODE"
+                },
+                {
+                    "name" : "HCAT"
+                },
+                {
+                    "name" : "AMBARI_SERVER"
+                },
+                {
+                    "name" : "APP_TIMELINE_SERVER"
+                },
+                {
+                    "name" : "HDFS_CLIENT"
+                },
+                {
+                    "name" : "HIVE_CLIENT"
+                },
+                {
+                    "name" : "NODEMANAGER"
+                },
+                {
+                    "name" : "DATANODE"
+                },
+                {
+                    "name" : "WEBHCAT_SERVER"
+                },
+                {
+                    "name" : "RESOURCEMANAGER"
+                },
+                {
+                    "name" : "HIVE_SERVER"
+                },
+                {
+                    "name" : "SPARK"
+                },
+                {
+                    "name" : "SECONDARY_NAMENODE"
+                },
+                {
+                    "name" : "TEZ_CLIENT"
+                },
+                {
+                    "name" : "HIVE_METASTORE"
+                },
+                {
+                    "name" : "METRICS_MONITOR"
+                },
+                {
+                    "name" : "METRICS_COLLECTOR"
+                },
+                {
+                    "name" : "SQOOP"
+                },
+                {
+                    "name" : "YARN_CLIENT"
+                },
+                {
+                    "name" : "MAPREDUCE2_CLIENT"
+                },
+                {
+                    "name" : "MYSQL_SERVER"
+                }
+            ],
+            "cardinality" : "1"
+        }
+    ],
+    "Blueprints" : {
+        "blueprint_name" : "singlenode-min",
+        "stack_name" : "HDP",
+        "stack_version" : "2.3.2"
+    }
+}

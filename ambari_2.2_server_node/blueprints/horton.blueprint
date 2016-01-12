@@ -1,0 +1,208 @@
+{
+    "configurations" : [
+      {
+        "hive-site": {
+          "javax.jdo.option.ConnectionPassword": "hive"
+        }
+      }
+    ],
+    "host_groups" : [
+        {
+            "name" : "namenode",
+            "components" : [
+                {
+                    "name" : "PIG"
+                },
+                {
+                    "name" : "OOZIE_CLIENT"
+                },
+                {
+                    "name" : "NAMENODE"
+                },
+                {
+                    "name" : "HCAT"
+                },
+                {
+                    "name" : "AMBARI_SERVER"
+                },
+                {
+                    "name" : "HDFS_CLIENT"
+                },
+                {
+                    "name" : "HIVE_CLIENT"
+                },
+                {
+                    "name" : "ZOOKEEPER_SERVER"
+                },
+                {
+                    "name" : "ZOOKEEPER_CLIENT"
+                },
+                {
+                    "name" : "TEZ_CLIENT"
+                },
+                {
+                    "name" : "SQOOP"
+                },
+                {
+                    "name" : "YARN_CLIENT"
+                },
+                {
+                    "name" : "MAPREDUCE2_CLIENT"
+                },
+                {
+                    "name" : "METRICS_MONITOR"
+                },
+                {
+                    "name" : "NODEMANAGER"
+                },
+                {
+                    "name" : "DATANODE"
+                },
+                {
+                    "name" : "SPARK"
+                }
+            ],
+            "cardinality" : "1"
+        },
+        {
+            "name" : "resourcemanager",
+            "components" : [
+                {
+                    "name" : "PIG"
+                },
+                {
+                    "name" : "HISTORYSERVER"
+                },
+                {
+                    "name" : "OOZIE_CLIENT"
+                },
+                {
+                    "name" : "HCAT"
+                },
+                {
+                    "name" : "APP_TIMELINE_SERVER"
+                },
+                {
+                    "name" : "HDFS_CLIENT"
+                },
+                {
+                    "name" : "HIVE_CLIENT"
+                },
+                {
+                    "name" : "RESOURCEMANAGER"
+                },
+                {
+                    "name" : "ZOOKEEPER_SERVER"
+                },
+                {
+                    "name" : "ZOOKEEPER_CLIENT"
+                },
+                {
+                    "name" : "TEZ_CLIENT"
+                },
+                {
+                    "name" : "SQOOP"
+                },
+                {
+                    "name" : "YARN_CLIENT"
+                },
+                {
+                    "name" : "MAPREDUCE2_CLIENT"
+                },
+                {
+                    "name" : "METRICS_MONITOR"
+                },
+                {
+                    "name" : "NODEMANAGER"
+                },
+                {
+                    "name" : "DATANODE"
+                },
+                {
+                    "name" : "SPARK_CLIENT"
+                },
+                {
+                    "name" : "SPARK_JOBHISTORYSERVER"
+                }
+            ],
+            "cardinality" : "1"
+        },
+        {
+            "name" : "hiveserver",
+            "components" : [
+                {
+                    "name" : "PIG"
+                },
+                {
+                    "name" : "OOZIE_CLIENT"
+                },
+                {
+                    "name" : "HCAT"
+                },
+                {
+                    "name" : "HDFS_CLIENT"
+                },
+                {
+                    "name" : "HIVE_CLIENT"
+                },
+                {
+                    "name" : "WEBHCAT_SERVER"
+                },
+                {
+                    "name" : "ZOOKEEPER_SERVER"
+                },
+                {
+                    "name" : "ZOOKEEPER_CLIENT"
+                },
+                {
+                    "name" : "HIVE_SERVER"
+                },
+                {
+                    "name" : "OOZIE_SERVER"
+                },
+                {
+                    "name" : "SECONDARY_NAMENODE"
+                },
+                {
+                    "name" : "TEZ_CLIENT"
+                },
+                {
+                    "name" : "HIVE_METASTORE"
+                },
+                {
+                    "name" : "METRICS_COLLECTOR"
+                },
+                {
+                    "name" : "SQOOP"
+                },
+                {
+                    "name" : "YARN_CLIENT"
+                },
+                {
+                    "name" : "MAPREDUCE2_CLIENT"
+                },
+                {
+                    "name" : "MYSQL_SERVER"
+                },
+                {
+                    "name" : "METRICS_MONITOR"
+                },
+                {
+                    "name" : "NODEMANAGER"
+                },
+                {
+                    "name" : "DATANODE"
+                },
+                {
+                    "name" : "SPARK_CLIENT"
+                }
+            ],
+            "cardinality" : "1"
+        }
+    ],
+    "Blueprints" : {
+        "blueprint_name" : "horton",
+        "stack_name" : "HDP",
+        "stack_version" : "2.3"
+    }
+}

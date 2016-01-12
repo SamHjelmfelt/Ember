@@ -1,0 +1,22 @@
+{
+  "blueprint":"multinode-min",
+  "default_password":"admin",
+  "host_groups":[
+    { 
+      "name":"namenode",
+      "hosts":[ { "fqdn":"namenode" } ] 
+    },
+    {
+      "name":"resourcemanager",
+      "hosts":[ { "fqdn":"resourcemanager" } ]
+    },
+    {
+      "name":"hiveserver",
+      "hosts":[ { "fqdn":"hiveserver" } ]
+    },
+    {
+      "name":"worker",
+      "hosts":[ {"fqdn":"node1"}, {"fqdn":"node2"}, {"fqdn":"node3"}, {"fqdn":"node4"} ]
+    }
+  ]
+}

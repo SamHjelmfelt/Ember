@@ -1,0 +1,106 @@
+{
+    "configurations" : [
+      {
+        "hive-site": {
+          "javax.jdo.option.ConnectionPassword": "hive"
+        }
+      }
+    ],
+    "host_groups" : [
+        {
+            "name" : "all",
+            "components" : [
+                {
+                    "name" : "SLIDER"
+                },
+                {
+                    "name" : "PIG"
+                },
+                {
+                    "name" : "HISTORYSERVER"
+                },
+                {
+                    "name" : "NAMENODE"
+                },
+                {
+                    "name" : "SUPERVISOR"
+                },
+                {
+                    "name" : "HCAT"
+                },
+                {
+                    "name" : "AMBARI_SERVER"
+                },
+                {
+                    "name" : "APP_TIMELINE_SERVER"
+                },
+                {
+                    "name" : "HDFS_CLIENT"
+                },
+                {
+                    "name" : "HIVE_CLIENT"
+                },
+                {
+                    "name" : "NODEMANAGER"
+                },
+                {
+                    "name" : "DATANODE"
+                },
+                {
+                    "name" : "RESOURCEMANAGER"
+                },
+                {
+                    "name" : "ZOOKEEPER_SERVER"
+                },
+                {
+                    "name" : "ZOOKEEPER_CLIENT"
+                },
+                {
+                    "name" : "HIVE_SERVER"
+                },
+                {
+                    "name" : "METRICS_COLLECTOR"
+                },
+                {
+                    "name" : "METRICS_MONITOR"
+                },
+                {
+                    "name" : "SECONDARY_NAMENODE"
+                },
+                {
+                    "name" : "TEZ_CLIENT"
+                },
+                {
+                    "name" : "HIVE_METASTORE"
+                },
+                {
+                    "name" : "SPARK_CLIENT"
+                },
+                {
+                    "name" : "SPARK_JOBHISTORYSERVER"
+                },
+                {
+                    "name" : "YARN_CLIENT"
+                },
+                {
+                    "name" : "MAPREDUCE2_CLIENT"
+                },
+                {
+                    "name" : "MYSQL_SERVER"
+                },
+                {
+                    "name" : "DRPC_SERVER"
+                },
+                {
+                    "name" : "NIMBUS"
+                }
+            ],
+            "cardinality" : "1"
+        }
+    ],
+    "Blueprints" : {
+        "blueprint_name" : "singlenode",
+        "stack_name" : "HDP",
+        "stack_version" : "2.2"
+    }
+}

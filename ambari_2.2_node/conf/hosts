@@ -1,0 +1,22 @@
+172.17.0.2	namenode
+172.17.0.3 	resourcemanager
+172.17.0.4	hiveserver
+172.17.0.5 	node1
+172.17.0.6	node2
+172.17.0.7	node3
+172.17.0.8	node4
+172.17.0.9	node5
+172.17.0.10	node6
+172.17.0.11	node7
+172.17.0.12	node8
+172.17.0.13	node9
+172.17.0.14	node10
+172.17.0.15	node11
+172.17.0.16	node12
+
+# The following lines are desirable for IPv6 capable hosts
+::1     ip6-localhost ip6-loopback
+fe00::0 ip6-localnet
+ff00::0 ip6-mcastprefix
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters
