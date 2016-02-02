@@ -1,3 +1,5 @@
+This fork is intended to generalize the solution for dev/test use cases.
+
 Ambari2.2
 ===========
 Dockerfiles and scripts for setting up an HDP cluster using Ambari 2.2. This setup uses Ambari Blueprints to automatically bootstrap the installation of an HDP 2.3.0.0 cluster. THIS VERSION OF THE DOCKER ENVIRONMENTS DOES NOT USE A LOCAL REPO - JUST FYI.
