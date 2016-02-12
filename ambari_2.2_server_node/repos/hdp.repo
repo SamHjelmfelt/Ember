@@ -1,6 +1,0 @@
-{
- "Repositories": {
-    "base_url": "http://namenode/hdp/HDP2.3.4.0",
-    "verify_base_url" : true
-  }
-}

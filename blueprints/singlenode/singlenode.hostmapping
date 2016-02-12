@@ -1,0 +1,10 @@
+{
+  "blueprint":"singlenode",
+  "default_password":"admin",
+  "host_groups":[
+    { 
+      "name":"all",
+      "hosts":[ { "fqdn":"namenode" } ] 
+    }
+  ]
+}
