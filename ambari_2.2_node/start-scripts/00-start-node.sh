@@ -9,12 +9,6 @@ chkconfig ntpd on
 echo never > /sys/kernel/mm/redhat_transparent_hugepage/defrag
 echo never > /sys/kernel/mm/redhat_transparent_hugepage/enabled
 
-# Replace /etc/hosts file
-umount /etc/hosts
-echo "" >> /root/conf/hosts
-echo "127.0.0.1   localhost" >> /root/conf/hosts
-cp /root/conf/hosts /etc/
-
 # The following link is used by all the Hadoop scripts
 rm -rf /usr/java/default
 mkdir -p /usr/java/default/bin/

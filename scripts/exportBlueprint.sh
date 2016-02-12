@@ -8,7 +8,7 @@ fi
 iniFile=$1
 
 clusterName=$(awk -F "=" '/clusterName/ {print $2}' $iniFile)
-ambariServerContainerName="$(awk -F "=" '/ambariServer/ {print $2}' $iniFile).$clusterName"
+ambariServerContainerName="$(awk -F "=" '/ambariServerHostName/ {print $2}' $iniFile).$clusterName"
 ambariServerInternalIP=$(docker inspect --format "{{ .NetworkSettings.Networks.$clusterName.IPAddress }}" $ambariServerContainerName)
 
 

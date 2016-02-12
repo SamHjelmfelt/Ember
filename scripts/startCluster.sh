@@ -9,4 +9,4 @@ iniFile=$1
 
 clusterName=$(awk -F "=" '/clusterName/ {print $2}' $iniFile)
 
-docker stop $(docker network inspect $clusterName | grep '"[a-zA-Z0-9]\{64\}": {' | awk -F "\"" '{print $2}')
+docker start $(docker ps -a | grep ".*.$clusterName" | cut -f1 -d" ")

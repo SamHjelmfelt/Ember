@@ -1,5 +1,5 @@
 {
-  "blueprint":"hwxu-multinode",
+  "blueprint":"multinode",
   "default_password":"admin",
   "host_groups":[
     { 
@@ -16,7 +16,7 @@
     },
     {
       "name":"worker",
-      "hosts":[ {"fqdn":"node1"}, {"fqdn":"node2"}, {"fqdn":"node3"}, {"fqdn":"node4"} ]
+      "hosts":[ {"fqdn":"node1"}, {"fqdn":"node2"}, {"fqdn":"node3"} ]
     }
   ]
 }

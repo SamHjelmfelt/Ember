@@ -5,28 +5,11 @@ MAINTAINER Rich Raposa, rich@hortonworks.com
 # HDP Software Requirements that are not a part of centos base
 RUN yum -y install openssh-server openssh-clients unzip ntp wget yum-priorities tar
 
-# Install nano and vim text editors
-RUN yum -y install nano vim
-
 # sudo is needed to run the Hadoop binaries
-RUN yum -y install sudo bind-utils zip
+#RUN yum -y install sudo bind-utils zip
 
 # Configure the Ambari Repository for 2.2.0.0
 RUN wget http://public-repo-1.hortonworks.com/ambari/centos6/2.x/updates/2.2.0.0/ambari.repo -O /etc/yum.repos.d/ambari.repo
-
-RUN ssh-keygen -t rsa -N "" -f /etc/ssh/ssh_host_key \
-    && ssh-keygen -t rsa -N "" -f /etc/ssh/ssh_host_rsa_key \
-    && ssh-keygen -t rsa -N "" -f /etc/ssh/ssh_host_dsa_key
-
-#Set up passwordless ssh
-RUN mkdir /root/.ssh
-ADD conf/id_rsa /root/.ssh/id_rsa
-ADD conf/id_rsa.pub /root/.ssh/id_rsa.pub
-ADD conf/sshd_config /etc/ssh/
-RUN touch /root/.ssh/authorized_keys \
-    && cat /root/.ssh/id_rsa.pub >> /root/.ssh/authorized_keys \
-    && chmod -R 600 /root/.ssh/
-RUN echo "IdentityFile /root/.ssh/id_rsa" >> /etc/ssh/ssh_config
 
 # Copy scripts and config files onto new container
 RUN mkdir /root/scripts && mkdir /root/conf && mkdir /root/start-scripts
@@ -36,6 +19,8 @@ ADD scripts/ /root/scripts/
 ADD start-scripts/ /root/start-scripts/
 
 RUN echo "source /etc/bashrc" >> /root/.bash_profile
+
+#RUN systemctl disable firewalld
 
 RUN echo "root:hadoop" | chpasswd
 

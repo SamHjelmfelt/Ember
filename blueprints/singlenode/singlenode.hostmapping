@@ -1,5 +1,5 @@
 {
-  "blueprint":"singlenode",
+  "blueprint":"hwxu-singlenode",
   "default_password":"admin",
   "host_groups":[
     { 
