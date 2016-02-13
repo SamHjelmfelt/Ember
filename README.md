@@ -14,15 +14,15 @@ This solution is an intermediate step between the HDP Sandbox and multi-machine 
 
 ## Prerequisites
 
+* CentOS 7 (Other Linux operating systems should work as well)
 * Docker 1.9+  
 -https://docs.docker.com/engine/installation/linux/centos/
-* CentOS 7 (Other Linux operating systems should work as well)
 
 * Configure for External Network Access to Nodes    
   1. Add multiple IPs to Host OS (N+1 for N nodes)  
     * Use VMWare/VirtualBox/etc. to add network adaptors to the VM
     * For example, the threeNode-sample configuration requires 4 IPs: 1 for host, 3 for the cluster.  
-  2. Limit SSH to a single IP. By default, SSH listens on 0.0.0.0
+  2. Limit SSH to a Single IP. By default, SSH listens on 0.0.0.0
      * Edit sshd_config
        ```
        vi /etc/ssh/sshd_config  
@@ -40,7 +40,7 @@ This solution is an intermediate step between the HDP Sandbox and multi-machine 
       sysctl -w net.ipv4.ip_forward=1  
       ```
 
-* Expand Node Disk Size Beyond 10GB Default. Note: this requires a rebuild of the images  
+* Expand Node Disk Size Beyond 10GB Default
     1. Create Docker configuration file  
        ```
        mkdir /etc/systemd/system/docker.service.d
@@ -49,7 +49,7 @@ This solution is an intermediate step between the HDP Sandbox and multi-machine 
        vi /etc/systemd/system/docker.service.d/docker.conf
        ```
 
-    2. Add the following content to the file. 20GB is recommended  
+    2. Add the following content to the file. 20GB is recommended, but not required.  
        ```
        [Service]  
        ExecStart=  
