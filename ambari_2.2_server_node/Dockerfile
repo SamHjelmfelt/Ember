@@ -1,6 +1,6 @@
 FROM hwxu/ambari_2.2_node
 
-MAINTAINER Rich Raposa, rich@hortonworks.com
+MAINTAINER Sam Hjelmfelt, shjelmfelt@hortonworks.com
 
 RUN yum -y install httpd yum-utils createrepo
 RUN chkconfig httpd on

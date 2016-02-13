@@ -1,6 +1,6 @@
 FROM hwxu/ambari_2.2_node
 
-MAINTAINER Rich Raposa, rich@hortonworks.com
+MAINTAINER Sam Hjelmfelt, shjelmfelt@hortonworks.com
 
 # Install and configure Ambari agent
 RUN yum -y install ambari-agent

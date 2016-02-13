@@ -1,6 +1,6 @@
 FROM centos:centos6
 
-MAINTAINER Rich Raposa, rich@hortonworks.com
+MAINTAINER Sam Hjelmfelt, shjelmfelt@hortonworks.com
 
 # HDP Software Requirements that are not a part of centos base
 RUN yum -y install openssh-server openssh-clients unzip ntp wget yum-priorities tar
