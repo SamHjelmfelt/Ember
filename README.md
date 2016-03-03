@@ -58,6 +58,8 @@ This solution is an intermediate step between the HDP Sandbox and multi-machine 
     3. Reload and restart Docker Daemon  
        ```
        systemctl daemon-reload  
+       ```  
+       ```
        systemctl restart docker
        ```
     
