@@ -1,13 +1,13 @@
 #!/bin/bash
 
-chkconfig sshd on 
-chkconfig ntpd on
+systemctl enable sshd.service
+systemctl enable ntpd.service
 
-/etc/init.d/sshd start
-/etc/init.d/ntpd start
+systemctl start sshd.service
+systemctl start ntpd.service
 
-echo never > /sys/kernel/mm/redhat_transparent_hugepage/defrag
-echo never > /sys/kernel/mm/redhat_transparent_hugepage/enabled
+#echo never > /sys/kernel/mm/redhat_transparent_hugepage/defrag
+#echo never > /sys/kernel/mm/redhat_transparent_hugepage/enabled
 
 # The following link is used by all the Hadoop scripts
 rm -rf /usr/java/default

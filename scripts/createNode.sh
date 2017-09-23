@@ -32,7 +32,8 @@ containerName="$nodeName.$clusterName"
 if [ $nodeName != $ambariServerHostName ]; then
     echo "Creating Ambari agent node: $nodeName. Ambari server: $ambariServerHostName"
 
-    docker run --privileged=true \
+    docker run --privileged \
+                --stop-signal=SIGRTMIN+3 \
                 -d \
                 --dns 8.8.8.8 \
                 $portParams \
@@ -43,11 +44,16 @@ if [ $nodeName != $ambariServerHostName ]; then
                 --dns-search=$clusterName \
                 --restart unless-stopped \
                 -i \
-                -t hwxu/ambari_2.2_agent_node
+                -t hwxu/ambari_2.4_agent_node #\
+                #/root/scripts/startup.sh
+                # --security-opt seccomp:unconfined \
+    docker network connect repoNet $containerName
+    docker exec -i -t $containerName /root/scripts/startup.sh
 else
     echo "Creating Ambari server node: $nodeName"
 
-    docker run --privileged=true \
+    docker run --privileged \
+                --stop-signal=RTMIN+3 \
                 -d \
                 --dns 8.8.8.8 \
                 $portParams \
@@ -56,9 +62,21 @@ else
                 -h $nodeName \
                 --net $clusterName \
                 --dns-search=$clusterName \
-                --restart unless-stopped \
                 -i \
-                -t hwxu/ambari_2.2_server_node
+                -t hwxu/ambari_2.4_server_node #\
+                #/root/scripts/startup.sh
+                # --security-opt seccomp:unconfined \
+
+                #--restart unless-stopped \
+
+
+
+                #-v /sys/fs/cgroup:/sys/fs/cgroup:ro \
+                #
+    docker network connect repoNet $containerName
+
+    echo "Setting up Ambari"
+    docker exec -i -t $containerName /root/scripts/startup.sh
 fi
 
 internalIP=$(docker inspect --format "{{ .NetworkSettings.Networks.$clusterName.IPAddress }}" $containerName)

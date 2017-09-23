@@ -6,8 +6,10 @@ find /var/lib/ambari-server/resources/stacks/ -name metainfo.xml | while read fi
   sed -i "/<timeout>.*<\/timeout>/c\<timeout>3000<\/timeout>" $file 
 done
 
-service httpd start
+#systemctl start httpd.service
 
+
+ambari-server setup -s -v --java-home $JAVA_HOME
 ambari-server start
 
 while [ `curl -o /dev/null --silent --head --write-out '%{http_code}\n' http://${AMBARI_SERVER}:8080` != 200 ]; do

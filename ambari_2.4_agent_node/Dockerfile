@@ -1,4 +1,4 @@
-FROM hwxu/ambari_2.2_node
+FROM hwxu/ambari_2.4_node
 
 MAINTAINER Sam Hjelmfelt, shjelmfelt@hortonworks.com
 
