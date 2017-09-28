@@ -14,14 +14,14 @@ ambariServerInternalIP=$(docker inspect --format "{{ .NetworkSettings.Networks.$
 
 while true
 do
-    curl -s --user admin:admin -H 'X-Requested-By:HortonworksUniverity' http://$ambariServerInternalIP:8080/api/v1/clusters/$clusterName/requests/1 | grep request_status | grep IN_PROGRESS > /dev/null
+    curl -s --user admin:admin -H 'X-Requested-By:DockerDoop' http://$ambariServerInternalIP:8080/api/v1/clusters/$clusterName/requests/1 | grep request_status | grep IN_PROGRESS > /dev/null
 
     if [[ $? == 0 ]]; then
       #echo "Cluster is still installing..."
-      curl -s --user admin:admin -H 'X-Requested-By:HortonworksUniverity' http://$ambariServerInternalIP:8080/api/v1/clusters/$clusterName/requests/1 | grep progress_percent
+      curl -s --user admin:admin -H 'X-Requested-By:DockerDoop' http://$ambariServerInternalIP:8080/api/v1/clusters/$clusterName/requests/1 | grep progress_percent
       #exit 0
     else
-        curl -s --user admin:admin -H 'X-Requested-By:HortonworksUniverity' http://$ambariServerInternalIP:8080/api/v1/clusters/$clusterName/requests/1 | grep request_status
+        curl -s --user admin:admin -H 'X-Requested-By:DockerDoop' http://$ambariServerInternalIP:8080/api/v1/clusters/$clusterName/requests/1 | grep request_status
         exit 1
     fi
 

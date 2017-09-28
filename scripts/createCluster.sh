@@ -1,5 +1,7 @@
 #!/bin/bash
 
+ambariVersion="2.5.2.0"
+
 if [[ -z $1 ]]; then
   echo "Usage: $0 <configuration.ini> "
   exit -1
@@ -26,12 +28,12 @@ if grep -q "externalIPs" $iniFile ; then
 
     for i in $(seq 0 $(($len-1)));
     do
-      ./scripts/createNode.sh ${hostNameArr[$i]} $ambariServerHostName $clusterName ${externalIpsArr[$i]}
+      ./scripts/createNode.sh $ambariVersion ${hostNameArr[$i]} $ambariServerHostName $clusterName ${externalIpsArr[$i]}
     done
 else
     for i in $(seq 0 $(($len-1)));
     do
-      ./scripts/createNode.sh ${hostNameArr[$i]} $ambariServerHostName $clusterName
+      ./scripts/createNode.sh $ambariVersion ${hostNameArr[$i]} $ambariServerHostName $clusterName
     done
 fi
 

@@ -1,5 +1,0 @@
-SELINUX=disabled
-# SELINUXTYPE= type of policy in use. Possible values are:
-#       targeted - Only targeted network daemons are protected.
-#       strict - Full SELinux protection.
-#SELINUXTYPE=targeted

@@ -15,8 +15,8 @@ This solution is an intermediate step between the HDP Sandbox and multi-machine 
 ## Prerequisites
 
 * CentOS 7 (Other Linux operating systems should work as well)
-* Docker 1.9+  
--https://docs.docker.com/engine/installation/linux/centos/
+* Docker 17 
+-https://docs.docker.com/engine/installation/linux/docker-ce/centos/
 
 * Configure for External Network Access to Nodes    
   1. Add multiple IPs to Host OS (N+1 for N nodes)  
@@ -40,30 +40,6 @@ This solution is an intermediate step between the HDP Sandbox and multi-machine 
       sysctl -w net.ipv4.ip_forward=1  
       ```
 
-* Expand Node Disk Size Beyond 10GB Default
-    1. Create Docker configuration file  
-       ```
-       mkdir /etc/systemd/system/docker.service.d
-       ```  
-       ```
-       vi /etc/systemd/system/docker.service.d/docker.conf
-       ```
-
-    2. Add the following content to the file. 20GB is recommended, but not required.  
-       ```
-       [Service]  
-       ExecStart=  
-       ExecStart=/usr/bin/docker daemon --storage-opt dm.basesize=20G
-       ```
-    3. Reload and restart Docker Daemon  
-       ```
-       systemctl daemon-reload  
-       ```  
-       ```
-       systemctl restart docker
-       ```
-    
-
 ## Configuration
 An .ini file is required to define hostnames and a cluster name. An external IP list can be defined to allow external access to nodes. 
 
@@ -75,20 +51,22 @@ HDP can be installed manually or through Ambari Blueprints. Example blueprint fi
 * ambariServerHostName (required)
 * hostNames (required)
 * externalIPs (required for external access to nodes)
+
+* hdpVersion (required to use blueprint script) (Default is 2.6.2.0)
 * blueprintName (required to use blueprint script)
 * blueprintFile (required to use blueprint script)
 * blueprintHostMappingFile (required to use blueprint script)  
 
 
 ## Preparing Docker Images
-3 Docker images need to be built:
+Three docker images are included. Note that the HDP and Ambari versions are configurable, and multiple versions can exist on the same host. Ambari mPacks (such as for HDF or HDPSearch) are also configurable.
 
-1. **Parent Image:** This container does basic preparation needed on all HDP cluster nodes - installing basic utility packages, setting environment variables, etc.
-2. **Ambari Server Image:** This container installs and runs the Ambari Server and Ambari Agent. This container also builds a local yum repository mirror for the HDP packages (base CentOS packages are not currently mirrored), so creating this image will take some time.
-3. **Ambari Agent Image:** This container runs an Ambari Agent process, but no Ambari Server. For multi-node cluster deployments, all nodes except the node designated as the Ambari Server node will be based on this image.
- 
+1. **HDP Repo Image (Optional)** This container installs and runs a local HDP repo in its own docker container. Creating this image will take some time.
+1. **Ambari Server Image:** This container installs and runs the Ambari Server and Ambari Agent. If mPacks are defined, they will be installed into Ambari Server as well.
+2. **Ambari Agent Image:** This container runs an Ambari Agent process, but no Ambari Server. For multi-node cluster deployments, all nodes except the node designated as the Ambari Server node will be based on this image.
+
    ```
-   ./scripts/build_images.sh
+   ./scripts/build_images.sh [--noRepo] [--ambariVersion=2.5.2.0] [--hdpVersion=2.6.2.0] [--mPack={bundleURL}]
    ```
 
 ## Creating a Cluster
@@ -125,7 +103,7 @@ This project includes several additional scripts:
     ./scripts/stats.sh
     ```
 
-3. **Create Node:** Create a new node. Note: does not install services
+3. **Create Node:** Create a new node. Note: does not install services or add to Ambari
         
     ```
     ./scripts/createNode.sh  HWorker4 HMaster 172.16.96.140 HCluster
@@ -153,7 +131,7 @@ This project includes several additional scripts:
     ```
 
 ## Notes
-1. The Ambari Server node hosts a local repository to accelerate the install process.
+1. A local repository to really accelerate install processes.
 2. Multiple clusters can reside on the same machine as long as the cluster names (and external IPs) are unique. The docker container names have ".{clusterName}" appended.
 3. Use the stop and start functionality to keep multiple cluster versions and/or configurations.
 4. The containers are configured to autostart if they were not manually stopped. Run this command to autostart the docker service.
@@ -164,6 +142,11 @@ This project includes several additional scripts:
 ## Potential Enhancements
 1. Additional sample blueprints
     - HA
-    - Kerberos
     - Standalone use cases (streaming, data science, batch, etc.)
-2. Optimize settings to reduce footprint and improve performance
+2. Add Kerberos support
+3. Add Local repo for mPack services
+4. Optimize settings to reduce footprint and improve performance
+
+
+## Known issues
+1. Sometimes the destroyCluster command will hang requiring a VM restart to complete. The Docker/Systemd interface has issues in CentOS 7
