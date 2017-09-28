@@ -5,6 +5,13 @@ This solution is an intermediate step between the HDP Sandbox and multi-machine 
 
 8GB RAM and 50GB disk is recommended for the multinode sample configuration. 6GB or less RAM may be viable for smaller clusters.
 
+## Updates September 27, 2017
+1. Upgraded to Centos 7
+2. Upgraded to OpenJDK 8
+3. Created separate HDP repo container
+4. Refactored images
+5. Made HDP and Ambari versions configurable (Defaults: HDP 2.6.2.0, Ambari 2.5.2.0)
+6. Added support for Ambari mPacks (Defaults: HDF 3.0.1.1, HDPSearch 2.2.8)
 
 ## Install Modes
 1. In a local VM
@@ -144,7 +151,7 @@ This project includes several additional scripts:
     - HA
     - Standalone use cases (streaming, data science, batch, etc.)
 2. Add Kerberos support
-3. Add Local repo for mPack services
+3. Add local repo for mPack services
 4. Optimize settings to reduce footprint and improve performance
 
 
