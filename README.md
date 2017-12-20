@@ -29,7 +29,7 @@ This solution is an intermediate step between the HDP Sandbox and multi-machine 
   1. Add multiple IPs to Host OS (N+1 for N nodes)  
     * Use VMWare/VirtualBox/etc. to add network adaptors to the VM
     * For example, the threeNode-sample configuration requires 4 IPs: 1 for host, 3 for the cluster.  
-  2. Limit SSH to a Single IP. By default, SSH listens on 0.0.0.0
+  2. Limit SSH on host VM to a Single IP. By default, SSH listens on 0.0.0.0
      * Edit sshd_config
        ```
        vi /etc/ssh/sshd_config  

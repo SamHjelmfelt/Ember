@@ -15,9 +15,9 @@
                 {"name" : "NAMENODE"},
                 {"name" : "AMBARI_SERVER"},
                 {"name" : "ZOOKEEPER_SERVER"},
-                {"name" : "NIMBUS"},
 
                 {"name" : "METRICS_MONITOR"},
+                {"name" : "METRICS_GRAFANA"},
 
                 {"name" : "PIG"},
                 {"name" : "HCAT"},
@@ -42,7 +42,6 @@
                 {"name" : "RESOURCEMANAGER"},
                 {"name" : "ZOOKEEPER_SERVER"},
                 {"name" : "SPARK_JOBHISTORYSERVER"},
-                {"name" : "STORM_UI_SERVER"},
 
                 {"name" : "METRICS_MONITOR"},
 
@@ -51,7 +50,6 @@
                 {"name" : "SQOOP"},
                 {"name" : "FALCON_CLIENT"},
                 {"name" : "OOZIE_CLIENT"},
-                {"name" : "DRPC_SERVER"},
                 {"name" : "HDFS_CLIENT"},
                 {"name" : "HIVE_CLIENT"},
                 {"name" : "TEZ_CLIENT"},
@@ -97,7 +95,6 @@
             "components" : [
                 {"name" : "KAFKA_BROKER"},
                 {"name" : "FLUME_HANDLER"},
-                {"name" : "SUPERVISOR"},
                 {"name" : "NODEMANAGER"},
                 {"name" : "DATANODE"},
 

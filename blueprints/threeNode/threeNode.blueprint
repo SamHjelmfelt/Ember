@@ -17,15 +17,12 @@
                 {"name" : "NAMENODE"},
                 {"name" : "ZOOKEEPER_SERVER"},
                 {"name" : "HBASE_MASTER"},
-                {"name" : "NIMBUS"},
                 {"name" : "NODEMANAGER"},
                 {"name" : "DATANODE"},
-                {"name" : "KAFKA_BROKER"},
-                {"name" : "FLUME_HANDLER"},
    		        {"name" : "HBASE_REGIONSERVER"},
-                {"name" : "SUPERVISOR"},
 
                 {"name" : "METRICS_MONITOR"},
+                {"name" : "METRICS_GRAFANA"},
 
                 {"name" : "PIG"},
                 {"name" : "HCAT"},
@@ -50,14 +47,9 @@
                 {"name" : "APP_TIMELINE_SERVER"},
                 {"name" : "RESOURCEMANAGER"},
                 {"name" : "ZOOKEEPER_SERVER"},
-                {"name" : "STORM_UI_SERVER"},
-                {"name" : "DRPC_SERVER"},
                 {"name" : "NODEMANAGER"},
                 {"name" : "DATANODE"},
-                {"name" : "KAFKA_BROKER"},
-                {"name" : "FLUME_HANDLER"},
                 {"name" : "HBASE_REGIONSERVER"},
-                {"name" : "SUPERVISOR"},
                 {"name" : "SPARK_JOBHISTORYSERVER"},
 
                 {"name" : "METRICS_MONITOR"},
@@ -93,10 +85,7 @@
                 {"name" : "MYSQL_SERVER"},
                 {"name" : "NODEMANAGER"},
                 {"name" : "DATANODE"},
-                {"name" : "KAFKA_BROKER"},
-                {"name" : "FLUME_HANDLER"},
                 {"name" : "HBASE_REGIONSERVER"},
-                {"name" : "SUPERVISOR"},
 
                 {"name" : "METRICS_MONITOR"},
 

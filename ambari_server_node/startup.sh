@@ -6,6 +6,7 @@ find /var/lib/ambari-server/resources/stacks/ -name metainfo.xml | while read fi
   sed -i "/<timeout>.*<\/timeout>/c\<timeout>3000<\/timeout>" $file 
 done
 
+sed -i "s/localhost/$AMBARI_SERVER/g" /etc/ambari-agent/conf/ambari-agent.ini
 
 ambari-server setup -s -v --java-home $JAVA_HOME
 ambari-server start

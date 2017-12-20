@@ -29,7 +29,7 @@ curl --user admin:admin -H 'X-Requested-By:DockerDoop' -X PUT http://$ambariServ
 curl --user admin:admin -H 'X-Requested-By:DockerDoop' -X PUT http://$ambariServerInternalIP:8080/api/v1/stacks/HDP/versions/$stackversion/operating_systems/redhat7/repositories/HDP-UTILS-$hdpUtilsVersion \
         -d "{\"Repositories\":{\"base_url\":\"http://$repoIP/hdp/HDP-UTILS-$hdpUtilsVersion/\",\"verify_base_url\":true}}"
 
-blueprintContent=`cat blueprints/singlenode/singlenode.blueprint `; echo
+blueprintContent=`cat $blueprintFile `; echo
 curl --user admin:admin -H 'X-Requested-By:DockerDoop' -X POST http://$ambariServerInternalIP:8080/api/v1/blueprints/$blueprintName -d "${blueprintContent/STACKVERSION/$stackversion}"
 curl --user admin:admin -H 'X-Requested-By:DockerDoop' -X POST http://$ambariServerInternalIP:8080/api/v1/clusters/$clusterName -d @$blueprintHostMappingFile
 

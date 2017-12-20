@@ -14,7 +14,7 @@ ENV JAVA_HOME /usr/lib/jvm/java-1.8.0-openjdk
 ENV PATH $PATH:$JAVA_HOME/bin
 
 # HDP Software Requirements that are not a part of centos base
-RUN yum -y install sudo openssh-server openssh-clients unzip ntp wget yum-priorities tar initscripts systemd* less bind-utils
+RUN yum -y install sudo openssh-server openssh-clients unzip ntp wget yum-priorities tar initscripts systemd* less bind-utils ntpd
 
 # default password
 RUN echo "root:hadoop" | chpasswd

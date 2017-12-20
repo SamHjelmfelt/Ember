@@ -13,7 +13,6 @@
                 {"name" : "SLIDER"},
                 {"name" : "HISTORYSERVER"},
                 {"name" : "NAMENODE"},
-                {"name" : "SUPERVISOR"},
                 {"name" : "AMBARI_SERVER"},
                 {"name" : "APP_TIMELINE_SERVER"},
                 {"name" : "NODEMANAGER"},
@@ -26,12 +25,10 @@
                 {"name" : "HIVE_METASTORE"},
                 {"name" : "SPARK_JOBHISTORYSERVER"},
                 {"name" : "MYSQL_SERVER"},
-                {"name" : "DRPC_SERVER"},
-                {"name" : "NIMBUS"},
                 {"name" : "WEBHCAT_SERVER"},
-                {"name" : "STORM_UI_SERVER"},
 
                 {"name" : "METRICS_MONITOR"},
+                {"name" : "METRICS_GRAFANA"},
 
                 {"name" : "PIG"},
                 {"name" : "HCAT"},
