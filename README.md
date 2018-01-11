@@ -153,7 +153,3 @@ This project includes several additional scripts:
 2. Add Kerberos support
 3. Add local repo for mPack services
 4. Optimize settings to reduce footprint and improve performance
-
-
-## Known issues
-1. Sometimes the destroyCluster command will hang requiring a VM restart to complete. The Docker/Systemd interface has issues in CentOS 7
