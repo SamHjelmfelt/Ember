@@ -23,14 +23,17 @@ hdpUtilsVersion=$(curl "http://$repoIP/hdp/"  &> /dev/stdout | egrep -o 'HDP-UTI
 stackversion=${hdpVersion:0:3}
 echo $stackversion
 
-
+#Put Repos
 curl --user admin:admin -H 'X-Requested-By:DockerDoop' -X PUT http://$ambariServerInternalIP:8080/api/v1/stacks/HDP/versions/$stackversion/operating_systems/redhat7/repositories/HDP-$stackversion \
-        -d "{\"Repositories\":{\"base_url\":\"http://$repoIP/hdp/HDP-$hdpVersion/\",\"verify_base_url\":true}}"
+        -d "{\"Repositories\":{\"repo_name\":\"HDP-$hdpVersion\",\"base_url\":\"http://$repoIP/hdp/HDP-$hdpVersion/\",\"verify_base_url\":true}}"
 curl --user admin:admin -H 'X-Requested-By:DockerDoop' -X PUT http://$ambariServerInternalIP:8080/api/v1/stacks/HDP/versions/$stackversion/operating_systems/redhat7/repositories/HDP-UTILS-$hdpUtilsVersion \
-        -d "{\"Repositories\":{\"base_url\":\"http://$repoIP/hdp/HDP-UTILS-$hdpUtilsVersion/\",\"verify_base_url\":true}}"
+        -d "{\"Repositories\":{\"repo_name\":\"HDP-UTILS-$hdpVersion\",\"base_url\":\"http://$repoIP/hdp/HDP-UTILS-$hdpUtilsVersion/\",\"verify_base_url\":true}}"
 
-blueprintContent=`cat $blueprintFile `; echo
+#Put blueprint
+blueprintContent=`cat $blueprintFile | sed "s/STACKVERSION/$stackversion/g"`; #echo $blueprintContent;
 curl --user admin:admin -H 'X-Requested-By:DockerDoop' -X POST http://$ambariServerInternalIP:8080/api/v1/blueprints/$blueprintName -d "${blueprintContent/STACKVERSION/$stackversion}"
+
+#Install cluster
 curl --user admin:admin -H 'X-Requested-By:DockerDoop' -X POST http://$ambariServerInternalIP:8080/api/v1/clusters/$clusterName -d @$blueprintHostMappingFile
 
 echo ""

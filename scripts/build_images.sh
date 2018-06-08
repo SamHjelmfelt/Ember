@@ -1,11 +1,11 @@
 #!/bin/bash
 
-ambariVersion="2.5.2.0"
-hdpVersion="2.6.2.0"
+ambariVersion="2.6.2.0"
+hdpVersion="2.6.5.0"
 
 repo=true
-defaultmPackURLs="http://public-repo-1.hortonworks.com/HDF/centos6/3.x/updates/3.0.1.1/tars/hdf_ambari_mp/hdf-ambari-mpack-3.0.1.1-5.tar.gz"
-defaultmPackURLs="$defaultmPackURLs,http://public-repo-1.hortonworks.com/HDP-SOLR/hdp-solr-ambari-mp/solr-service-mpack-2.2.8.tar.gz"
+defaultmPackURLs="http://public-repo-1.hortonworks.com/HDF/centos7/3.x/updates/3.1.2.0/tars/hdf_ambari_mp/hdf-ambari-mpack-3.1.2.0-7.tar.gz"
+defaultmPackURLs="$defaultmPackURLs,http://public-repo-1.hortonworks.com/HDP-SOLR/hdp-solr-ambari-mp/solr-service-mpack-3.0.0.tar.gz"
 
 mPackURLs=""
 

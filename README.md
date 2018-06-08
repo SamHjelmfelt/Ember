@@ -10,8 +10,8 @@ This solution is an intermediate step between the HDP Sandbox and multi-machine 
 2. Upgraded to OpenJDK 8
 3. Created separate HDP repo container
 4. Refactored images
-5. Made HDP and Ambari versions configurable (Defaults: HDP 2.6.2.0, Ambari 2.5.2.0)
-6. Added support for Ambari mPacks (Defaults: HDF 3.0.1.1, HDPSearch 2.2.8)
+5. Made HDP and Ambari versions configurable
+6. Added support for Ambari mPacks (Defaults: HDF, HDP Search)
 
 ## Install Modes
 1. In a local VM
@@ -59,7 +59,8 @@ HDP can be installed manually or through Ambari Blueprints. Example blueprint fi
 * hostNames (required)
 * externalIPs (required for external access to nodes)
 
-* hdpVersion (required to use blueprint script) (Default is 2.6.2.0)
+* ambariVersion (required) (Default is 2.6.2.0
+* hdpVersion (required to use blueprint script) (Default is 2.6.5.0)
 * blueprintName (required to use blueprint script)
 * blueprintFile (required to use blueprint script)
 * blueprintHostMappingFile (required to use blueprint script)  

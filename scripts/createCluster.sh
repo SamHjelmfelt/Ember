@@ -1,7 +1,5 @@
 #!/bin/bash
 
-ambariVersion="2.5.2.0"
-
 if [[ -z $1 ]]; then
   echo "Usage: $0 <configuration.ini> "
   exit -1
@@ -12,6 +10,7 @@ ambariServerHostName=$(awk -F "=" '/ambariServerHostName/ {print $2}' $iniFile)
 clusterName=$(awk -F "=" '/clusterName/ {print $2}' $iniFile)
 blueprint=$(awk -F "=" '/blueprint/ {print $2}' $iniFile)
 hostNames=$(awk -F "=" '/hostNames/ {print $2}' $iniFile)
+ambariVersion=$(awk -F "=" '/ambariVersion/ {print $2}' $iniFile)
 
 hostNameArr=(${hostNames//,/ })
 len=${#hostNameArr[@]}
