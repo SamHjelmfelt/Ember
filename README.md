@@ -59,8 +59,8 @@ HDP can be installed manually or through Ambari Blueprints. Example blueprint fi
 * hostNames (required)
 * externalIPs (required for external access to nodes)
 
-* ambariVersion (required) (Default is 2.6.2.0
-* hdpVersion (required to use blueprint script) (Default is 2.6.5.0)
+* ambariVersion (required) (Default is 2.6.2.0)
+* hdpVersion (required to use blueprint script) (Default is 2.6.5.0-292) (Note: build number must be specified)
 * blueprintName (required to use blueprint script)
 * blueprintFile (required to use blueprint script)
 * blueprintHostMappingFile (required to use blueprint script)  
@@ -74,7 +74,7 @@ Three docker images are included. Note that the HDP and Ambari versions are conf
 2. **Ambari Agent Image:** This container runs an Ambari Agent process, but no Ambari Server. For multi-node cluster deployments, all nodes except the node designated as the Ambari Server node will be based on this image.
 
    ```
-   ./scripts/build_images.sh [--noRepo] [--ambariVersion=2.5.2.0] [--hdpVersion=2.6.2.0] [--mPack={bundleURL}]
+   ./scripts/build_images.sh [--noRepo] [--ambariVersion=2.6.2.0] [--hdpVersion=2.6.5.0-292] [--mPack={bundleURL}]
    ```
 
 ## Creating a Cluster

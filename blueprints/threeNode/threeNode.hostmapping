@@ -1,6 +1,7 @@
 {
   "blueprint":"threeNode",
   "default_password":"admin",
+  "repository_version": "REPOSITORYVERSION",
   "host_groups":[
     {
       "name":"namenode",

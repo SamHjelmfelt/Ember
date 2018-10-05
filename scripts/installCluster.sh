@@ -21,20 +21,27 @@ repoIP=$(docker inspect --format "{{ .NetworkSettings.Networks.repoNet.IPAddress
 hdpUtilsVersion=$(curl "http://$repoIP/hdp/"  &> /dev/stdout | egrep -o 'HDP-UTILS-[\.0-9]*' | head -n1 | cut -c11-)
 
 stackversion=${hdpVersion:0:3}
+baseVersion=${hdpVersion:0:7}
 echo $stackversion
 
 #Put Repos
-curl --user admin:admin -H 'X-Requested-By:DockerDoop' -X PUT http://$ambariServerInternalIP:8080/api/v1/stacks/HDP/versions/$stackversion/operating_systems/redhat7/repositories/HDP-$stackversion \
-        -d "{\"Repositories\":{\"repo_name\":\"HDP-$hdpVersion\",\"base_url\":\"http://$repoIP/hdp/HDP-$hdpVersion/\",\"verify_base_url\":true}}"
-curl --user admin:admin -H 'X-Requested-By:DockerDoop' -X PUT http://$ambariServerInternalIP:8080/api/v1/stacks/HDP/versions/$stackversion/operating_systems/redhat7/repositories/HDP-UTILS-$hdpUtilsVersion \
-        -d "{\"Repositories\":{\"repo_name\":\"HDP-UTILS-$hdpVersion\",\"base_url\":\"http://$repoIP/hdp/HDP-UTILS-$hdpUtilsVersion/\",\"verify_base_url\":true}}"
+wget http://public-repo-1.hortonworks.com/HDP/centos7/2.x/updates/$baseVersion/HDP-${hdpVersion}.xml -O HDP-${hdpVersion}.xml
+sed -i "s#http://public-repo-1.hortonworks.com/HDP/centos7/2.x/updates/$baseVersion#http://$repoIP/hdp/HDP-$baseVersion/#g" HDP-${hdpVersion}.xml
+sed -i "s#http://public-repo-1.hortonworks.com/HDP-GPL/centos7/2.x/updates/$baseVersion#http://$repoIP/hdp/HDP-GPL-$baseVersion/#g" HDP-${hdpVersion}.xml
+sed -i "s#http://public-repo-1.hortonworks.com/HDP-UTILS-$hdpUtilsVersion/repos/centos7#http://$repoIP/hdp/HDP-UTILS-$hdpUtilsVersion/#g" HDP-${hdpVersion}.xml
+
+docker cp HDP-${hdpVersion}.xml $ambariServerContainerName:/version_definitions_HDP-${hdpVersion}.xml
+
+curl --user admin:admin -H 'X-Requested-By:DockerDoop' -X POST http://$ambariServerInternalIP:8080/api/v1/version_definitions \
+        -d "{ \"VersionDefinition\": { \"version_url\": \"file:/version_definitions_HDP-${hdpVersion}.xml\" } }"
 
 #Put blueprint
 blueprintContent=`cat $blueprintFile | sed "s/STACKVERSION/$stackversion/g"`; #echo $blueprintContent;
-curl --user admin:admin -H 'X-Requested-By:DockerDoop' -X POST http://$ambariServerInternalIP:8080/api/v1/blueprints/$blueprintName -d "${blueprintContent/STACKVERSION/$stackversion}"
+curl --user admin:admin -H 'X-Requested-By:DockerDoop' -X POST http://$ambariServerInternalIP:8080/api/v1/blueprints/$blueprintName -d "${blueprintContent}"
 
 #Install cluster
-curl --user admin:admin -H 'X-Requested-By:DockerDoop' -X POST http://$ambariServerInternalIP:8080/api/v1/clusters/$clusterName -d @$blueprintHostMappingFile
+hostMappingContent=`cat $blueprintHostMappingFile | sed "s/REPOSITORYVERSION/$hdpVersion/g"`;
+curl --user admin:admin -H 'X-Requested-By:DockerDoop' -X POST http://$ambariServerInternalIP:8080/api/v1/clusters/$clusterName -d "${hostMappingContent}"
 
 echo ""
 echo "HDP is currently installing"

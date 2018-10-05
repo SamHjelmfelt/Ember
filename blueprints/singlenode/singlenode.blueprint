@@ -45,7 +45,7 @@
         }
     ],
     "Blueprints" : {
-        "blueprint_name" : "hwxu-singlenode",
+        "blueprint_name" : "singlenode",
         "stack_name" : "HDP",
         "stack_version" : "STACKVERSION"
     }

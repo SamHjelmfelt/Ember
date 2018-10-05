@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ambariVersion="2.6.2.0"
-hdpVersion="2.6.5.0"
+hdpVersion="2.6.5.0-292"
 
 repo=true
 defaultmPackURLs="http://public-repo-1.hortonworks.com/HDF/centos7/3.x/updates/3.1.2.0/tars/hdf_ambari_mp/hdf-ambari-mpack-3.1.2.0-7.tar.gz"
