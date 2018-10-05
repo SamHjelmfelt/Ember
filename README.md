@@ -146,6 +146,7 @@ This project includes several additional scripts:
    ```
    chkconfig docker on
    ```
+5. Installing Oozie requires following these steps: https://docs.hortonworks.com/HDPDocuments/Ambari-2.7.1.0/managing-and-monitoring-ambari/content/amb_enable_the_oozie_ui.html
  
 ## Potential Enhancements
 1. Additional sample blueprints
