@@ -22,15 +22,15 @@ if [[ -n $5 ]]; then
     done
 fi
 
-docker network ls | grep -q $clusterName
+docker network ls | grep dockerdoop
 if [ $? -ne 0 ]; then
-    docker network create $clusterName
-    echo "Created network for $clusterName"
+    docker network create dockerdoop
+    echo "Created network for DockerDoop"
 fi
 
 containerName="$nodeName.$clusterName"
 
-if [ $nodeName != $ambariServerHostName ]; then
+if [ $containerName != $ambariServerHostName ]; then
     echo "Creating Ambari agent node: $nodeName. Ambari server: $ambariServerHostName"
 
     docker run --privileged \
@@ -40,14 +40,13 @@ if [ $nodeName != $ambariServerHostName ]; then
                 $portParams \
                 -e AMBARI_SERVER=$ambariServerHostName \
                 --name $containerName \
-                -h $nodeName \
-                --net $clusterName \
+                -h $containerName \
+                --net dockerdoop \
                 --dns-search=$clusterName \
                 --restart unless-stopped \
                 -i \
                 -t 'dockerdoop/ambari_agent_node_'$ambariVersion
 
-    docker network connect repoNet $containerName
     docker exec -i -t $containerName /root/startup.sh
 else
     echo "Creating Ambari server node: $nodeName"
@@ -59,19 +58,18 @@ else
                 $portParams \
                 -e AMBARI_SERVER=$ambariServerHostName \
                 --name $containerName \
-                -h $nodeName \
-                --net $clusterName \
+                -h $containerName \
+                --net dockerdoop \
                 --dns-search=$clusterName \
+                --restart unless-stopped \
                 -i \
                 -t 'dockerdoop/ambari_server_node_'$ambariVersion
-
-    docker network connect repoNet $containerName
 
     echo "Setting up Ambari"
     docker exec -i -t $containerName /root/startup.sh
 fi
 
-internalIP=$(docker inspect --format "{{ .NetworkSettings.Networks.$clusterName.IPAddress }}" $containerName)
+internalIP=$(docker inspect --format "{{ .NetworkSettings.Networks.dockerdoop.IPAddress }}" $containerName)
 
 
 if [[ -n $4 ]]; then

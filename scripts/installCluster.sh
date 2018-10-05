@@ -14,8 +14,8 @@ blueprintName=$(awk -F "=" '/blueprintName/ {print $2}' $iniFile)
 blueprintFile=$(awk -F "=" '/blueprintFile/ {print $2}' $iniFile)
 blueprintHostMappingFile=$(awk -F "=" '/blueprintHostMappingFile/ {print $2}' $iniFile)
 ambariServerContainerName="$(awk -F "=" '/ambariServerHostName/ {print $2}' $iniFile).$clusterName"
-ambariServerInternalIP=$(docker inspect --format "{{ .NetworkSettings.Networks.$clusterName.IPAddress }}" $ambariServerContainerName)
-repoIP=$(docker inspect --format "{{ .NetworkSettings.Networks.repoNet.IPAddress }}" "reponode_${hdpVersion//./-}")
+ambariServerInternalIP=$(docker inspect --format "{{ .NetworkSettings.Networks.dockerdoop.IPAddress }}" $ambariServerContainerName)
+repoIP=$(docker inspect --format "{{ .NetworkSettings.Networks.dockerdoop.IPAddress }}" "reponode_${hdpVersion//./-}")
 
 
 hdpUtilsVersion=$(curl "http://$repoIP/hdp/"  &> /dev/stdout | egrep -o 'HDP-UTILS-[\.0-9]*' | head -n1 | cut -c11-)

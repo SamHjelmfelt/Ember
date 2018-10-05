@@ -12,14 +12,11 @@
             "components" : [
                 {"name" : "AMBARI_SERVER"},
 
-                {"name" : "KNOX_GATEWAY"},
                 {"name" : "SLIDER"},
                 {"name" : "NAMENODE"},
                 {"name" : "ZOOKEEPER_SERVER"},
-                {"name" : "HBASE_MASTER"},
                 {"name" : "NODEMANAGER"},
                 {"name" : "DATANODE"},
-   		        {"name" : "HBASE_REGIONSERVER"},
 
                 {"name" : "METRICS_MONITOR"},
                 {"name" : "METRICS_GRAFANA"},
@@ -27,7 +24,6 @@
                 {"name" : "PIG"},
                 {"name" : "HCAT"},
                 {"name" : "SQOOP"},
-                {"name" : "HBASE_CLIENT"},
                 {"name" : "HDFS_CLIENT"},
                 {"name" : "HIVE_CLIENT"},
                 {"name" : "ZOOKEEPER_CLIENT"},
@@ -47,7 +43,6 @@
                 {"name" : "ZOOKEEPER_SERVER"},
                 {"name" : "NODEMANAGER"},
                 {"name" : "DATANODE"},
-                {"name" : "HBASE_REGIONSERVER"},
                 {"name" : "SPARK_JOBHISTORYSERVER"},
 
                 {"name" : "METRICS_MONITOR"},
@@ -55,7 +50,6 @@
                 {"name" : "PIG"},
                 {"name" : "HCAT"},
                 {"name" : "SQOOP"},
-                {"name" : "HBASE_CLIENT"},
                 {"name" : "HDFS_CLIENT"},
                 {"name" : "HIVE_CLIENT"},
                 {"name" : "ZOOKEEPER_CLIENT"},
@@ -79,14 +73,12 @@
                 {"name" : "MYSQL_SERVER"},
                 {"name" : "NODEMANAGER"},
                 {"name" : "DATANODE"},
-                {"name" : "HBASE_REGIONSERVER"},
 
                 {"name" : "METRICS_MONITOR"},
 
                 {"name" : "PIG"},
                 {"name" : "HCAT"},
                 {"name" : "SQOOP"},
-                {"name" : "HBASE_CLIENT"},
                 {"name" : "HDFS_CLIENT"},
                 {"name" : "HIVE_CLIENT"},
                 {"name" : "ZOOKEEPER_CLIENT"},

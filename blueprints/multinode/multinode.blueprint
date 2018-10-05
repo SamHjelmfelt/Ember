@@ -10,7 +10,6 @@
         {
             "name" : "namenode",
             "components" : [
-                {"name" : "KNOX_GATEWAY"},
                 {"name" : "SLIDER"},
                 {"name" : "NAMENODE"},
                 {"name" : "AMBARI_SERVER"},
@@ -85,8 +84,6 @@
         {
             "name" : "worker",
             "components" : [
-                {"name" : "KAFKA_BROKER"},
-                {"name" : "FLUME_HANDLER"},
                 {"name" : "NODEMANAGER"},
                 {"name" : "DATANODE"},
 

@@ -37,7 +37,7 @@ else
               --build-arg hdpVersion=$hdpVersion \
               -t dockerdoop/"reponode_${hdpVersion//./-}" \
               repo_node
-  docker network create repoNet
+  docker network create dockerdoop
   docker run --privileged=true \
               --security-opt seccomp:unconfined \
               --cap-add=SYS_ADMIN \
@@ -45,7 +45,7 @@ else
               --dns 8.8.8.8 \
               --name "reponode_${hdpVersion//./-}" \
               -h reponode \
-              --net repoNet \
+              --net dockerdoop \
               --restart unless-stopped \
               -i \
               -t dockerdoop/"reponode_${hdpVersion//./-}"  \

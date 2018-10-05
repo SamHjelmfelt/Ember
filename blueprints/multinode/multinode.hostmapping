@@ -5,19 +5,19 @@
   "host_groups":[
     { 
       "name":"namenode",
-      "hosts":[ { "fqdn":"namenode" } ] 
+      "hosts":[ { "fqdn":"namenode.multinode" } ]
     },
     {
       "name":"resourcemanager",
-      "hosts":[ { "fqdn":"resourcemanager" } ]
+      "hosts":[ { "fqdn":"resourcemanager.multinode" } ]
     },
     {
       "name":"hiveserver",
-      "hosts":[ { "fqdn":"hiveserver" } ]
+      "hosts":[ { "fqdn":"hiveserver.multinode" } ]
     },
     {
       "name":"worker",
-      "hosts":[ {"fqdn":"node1"}, {"fqdn":"node2"}, {"fqdn":"node3"} ]
+      "hosts":[ {"fqdn":"node1.multinode"}, {"fqdn":"node2.multinode"}, {"fqdn":"node3.multinode"} ]
     }
   ]
 }

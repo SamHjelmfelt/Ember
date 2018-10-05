@@ -5,15 +5,15 @@
   "host_groups":[
     {
       "name":"namenode",
-      "hosts":[ { "fqdn":"namenode" } ]
+      "hosts":[ { "fqdn":"namenode.threenode" } ]
     },
     {
       "name":"resourcemanager",
-      "hosts":[ { "fqdn":"resourcemanager" } ]
+      "hosts":[ { "fqdn":"resourcemanager.threenode" } ]
     },
     {
       "name":"hiveserver",
-      "hosts":[ { "fqdn":"hiveserver" } ]
+      "hosts":[ { "fqdn":"hiveserver.threenode" } ]
     }
   ]
 }

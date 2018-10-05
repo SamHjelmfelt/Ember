@@ -5,7 +5,7 @@
   "host_groups":[
     { 
       "name":"all",
-      "hosts":[ { "fqdn":"namenode" } ] 
+      "hosts":[ { "fqdn":"namenode.singlenode" } ]
     }
   ]
 }
