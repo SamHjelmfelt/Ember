@@ -26,7 +26,6 @@
                 {"name" : "HDFS_CLIENT"},
                 {"name" : "HIVE_CLIENT"},
                 {"name" : "ZOOKEEPER_CLIENT"},
-                {"name" : "FALCON_CLIENT"},
                 {"name" : "TEZ_CLIENT"},
                 {"name" : "YARN_CLIENT"},
                 {"name" : "MAPREDUCE2_CLIENT"},
@@ -48,7 +47,6 @@
                 {"name" : "PIG"},
                 {"name" : "HCAT"},
                 {"name" : "SQOOP"},
-                {"name" : "FALCON_CLIENT"},
                 {"name" : "OOZIE_CLIENT"},
                 {"name" : "HDFS_CLIENT"},
                 {"name" : "HIVE_CLIENT"},
@@ -63,7 +61,6 @@
         {
             "name" : "hiveserver",
             "components" : [
-                {"name" : "FALCON_SERVER"},
                 {"name" : "WEBHCAT_SERVER"},
                 {"name" : "ZOOKEEPER_SERVER"},
                 {"name" : "HIVE_SERVER"},
@@ -83,7 +80,6 @@
                 {"name" : "HIVE_CLIENT"},
                 {"name" : "OOZIE_CLIENT"},
                 {"name" : "ZOOKEEPER_CLIENT"},
-                {"name" : "FALCON_CLIENT"},
                 {"name" : "YARN_CLIENT"},
                 {"name" : "MAPREDUCE2_CLIENT"},
                 {"name" : "SPARK_CLIENT"}
@@ -107,7 +103,6 @@
                 {"name" : "HDFS_CLIENT"},
                 {"name" : "HIVE_CLIENT"},
                 {"name" : "ZOOKEEPER_CLIENT"},
-                {"name" : "FALCON_CLIENT"},
                 {"name" : "TEZ_CLIENT"},
                 {"name" : "YARN_CLIENT"},
                 {"name" : "MAPREDUCE2_CLIENT"},
