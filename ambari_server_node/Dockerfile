@@ -10,7 +10,7 @@ RUN yum -y install ambari-server
 
 # Download the MySql client connector JAR and link it to the resources folder
 RUN wget https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-8.0.12-1.el7.noarch.rpm
-RUN yum install mysql-connector-java-8.0.12-1.el7.noarch.rpm
+RUN yum -y install mysql-connector-java-8.0.12-1.el7.noarch.rpm
 RUN ln -s /usr/share/java/mysql-connector-java-8.0.12.jar /var/lib/ambari-server/resources/mysql-connector-java.jar
 
 # Install mPacks
