@@ -60,11 +60,12 @@ HDP can be installed manually or through Ambari Blueprints. Example blueprint fi
 * externalIPs (required for external access to nodes)
 
 * ambariVersion (required) (Default is 2.6.2.0)
-* hdpVersion (required to use blueprint script) (Default is 2.6.5.0-292) (Note: build number must be specified)
+* hdpVersion (required to use blueprint script) (Default is 2.6.5.0-292)
 * blueprintName (required to use blueprint script)
 * blueprintFile (required to use blueprint script)
 * blueprintHostMappingFile (required to use blueprint script)  
 
+Note: HDP build number must be specified. It can be found in the HDP repo path (e.g. https://docs.hortonworks.com/HDPDocuments/Ambari-2.6.2.2/bk_ambari-installation/content/hdp_26_repositories.html).
 
 ## Preparing Docker Images
 Three docker images are included. Note that the HDP and Ambari versions are configurable, and multiple versions can exist on the same host. Ambari mPacks (such as for HDF or HDPSearch) are also configurable.
