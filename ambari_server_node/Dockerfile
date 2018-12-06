@@ -3,7 +3,7 @@ FROM 'dockerdoop/ambari_agent_node_'$ambariVersion
 
 ARG mPacks=""
 
-MAINTAINER Sam Hjelmfelt, shjelmfelt@hortonworks.com
+MAINTAINER Sam Hjelmfelt, samhjelmfelt@yahoo.com
 
 # Install and configure Ambari server and agent
 RUN yum -y install ambari-server

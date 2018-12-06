@@ -1,11 +1,11 @@
 #!/bin/bash
 
-ambariVersion="2.6.2.0"
-hdpVersion="2.6.5.0-292"
+ambariVersion="2.7.1.0"
+hdpVersion="3.0.1.0-187"
 
 repo=true
-defaultmPackURLs="http://public-repo-1.hortonworks.com/HDF/centos7/3.x/updates/3.1.2.0/tars/hdf_ambari_mp/hdf-ambari-mpack-3.1.2.0-7.tar.gz"
-defaultmPackURLs="$defaultmPackURLs,http://public-repo-1.hortonworks.com/HDP-SOLR/hdp-solr-ambari-mp/solr-service-mpack-3.0.0.tar.gz"
+defaultmPackURLs="http://public-repo-1.hortonworks.com/HDF/centos7/3.x/updates/3.3.0.0/tars/hdf_ambari_mp/hdf-ambari-mpack-3.3.0.0-165.tar.gz"
+defaultmPackURLs="$defaultmPackURLs,http://public-repo-1.hortonworks.com/HDP-SOLR/hdp-solr-ambari-mp/solr-service-mpack-4.0.0.tar.gz"
 
 mPackURLs=""
 
@@ -33,6 +33,7 @@ fi
 if [[ $1 = "--noRepo" ]]; then
   echo "Not creating local repo"
 else
+  echo "Creating local repo for HDP $hdpVersion"
   docker build \
               --build-arg hdpVersion=$hdpVersion \
               -t dockerdoop/"reponode_${hdpVersion//./-}" \
@@ -55,6 +56,7 @@ else
 
 fi
 
+echo "Creating Ambari $ambariVersion images"
 docker build --build-arg ambariVersion=$ambariVersion -t 'dockerdoop/ambari_agent_node_'$ambariVersion ambari_agent_node
 
 docker build --build-arg ambariVersion=$ambariVersion --build-arg mPacks="$mPackURLs" -t 'dockerdoop/ambari_server_node_'$ambariVersion ambari_server_node

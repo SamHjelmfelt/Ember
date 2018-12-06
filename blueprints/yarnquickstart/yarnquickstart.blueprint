@@ -1,38 +1,39 @@
 {
     "configurations" : [
-      {
-        "hive-site": {
-          "javax.jdo.option.ConnectionPassword": "hive"
+    {
+      "yarn-site" : {
+        "properties" : {
+          "yarn.nodemanager.container-executor.class" : "org.apache.hadoop.yarn.server.nodemanager.LinuxContainerExecutor",
+          "yarn.nodemanager.runtime.linux.docker.default-container-network" : "dockerdoop",
+          "yarn.nodemanager.runtime.linux.docker.allowed-container-networks" : "host,none,bridge,dockerdoop",
+          "yarn.nodemanager.linux-container-executor.nonsecure-mode.local-user" : "dockeruser"
         }
       }
-    ],
+    },
+    {
+      "container-executor" : {
+        "properties" : {
+          "docker_trusted_registries" : "library",
+          "docker_module_enabled" : "true",
+          "docker_binary" : "/opt/dockerwrapper.sh"
+        }
+      }
+    }],
     "host_groups" : [
         {
             "name" : "all",
             "components" : [
                 {"name" : "HISTORYSERVER"},
                 {"name" : "NAMENODE"},
-                {"name" : "AMBARI_SERVER"},
                 {"name" : "APP_TIMELINE_SERVER"},
                 {"name" : "NODEMANAGER"},
                 {"name" : "DATANODE"},
                 {"name" : "RESOURCEMANAGER"},
                 {"name" : "ZOOKEEPER_SERVER"},
-                {"name" : "HIVE_SERVER"},
-                {"name" : "METRICS_COLLECTOR"},
                 {"name" : "SECONDARY_NAMENODE"},
-                {"name" : "HIVE_METASTORE"},
-                {"name" : "MYSQL_SERVER"},
 
-                {"name" : "METRICS_MONITOR"},
-                {"name" : "METRICS_GRAFANA"},
-
-                {"name" : "PIG"},
-                {"name" : "SQOOP"},
                 {"name" : "HDFS_CLIENT"},
-                {"name" : "HIVE_CLIENT"},
                 {"name" : "ZOOKEEPER_CLIENT"},
-                {"name" : "TEZ_CLIENT"},
                 {"name" : "YARN_CLIENT"},
                 {"name" : "MAPREDUCE2_CLIENT"}
             ],
@@ -40,7 +41,7 @@
         }
     ],
     "Blueprints" : {
-        "blueprint_name" : "singlenode",
+        "blueprint_name" : "yarnquickstart",
         "stack_name" : "HDP",
         "stack_version" : "STACKVERSION"
     }

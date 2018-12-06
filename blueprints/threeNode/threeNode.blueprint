@@ -12,7 +12,6 @@
             "components" : [
                 {"name" : "AMBARI_SERVER"},
 
-                {"name" : "SLIDER"},
                 {"name" : "NAMENODE"},
                 {"name" : "ZOOKEEPER_SERVER"},
                 {"name" : "NODEMANAGER"},
@@ -22,15 +21,13 @@
                 {"name" : "METRICS_GRAFANA"},
 
                 {"name" : "PIG"},
-                {"name" : "HCAT"},
                 {"name" : "SQOOP"},
                 {"name" : "HDFS_CLIENT"},
                 {"name" : "HIVE_CLIENT"},
                 {"name" : "ZOOKEEPER_CLIENT"},
                 {"name" : "TEZ_CLIENT"},
                 {"name" : "YARN_CLIENT"},
-                {"name" : "MAPREDUCE2_CLIENT"},
-                {"name" : "SPARK_CLIENT"}
+                {"name" : "MAPREDUCE2_CLIENT"}
             ],
             "cardinality" : "1"
         },
@@ -43,27 +40,23 @@
                 {"name" : "ZOOKEEPER_SERVER"},
                 {"name" : "NODEMANAGER"},
                 {"name" : "DATANODE"},
-                {"name" : "SPARK_JOBHISTORYSERVER"},
 
                 {"name" : "METRICS_MONITOR"},
 
                 {"name" : "PIG"},
-                {"name" : "HCAT"},
                 {"name" : "SQOOP"},
                 {"name" : "HDFS_CLIENT"},
                 {"name" : "HIVE_CLIENT"},
                 {"name" : "ZOOKEEPER_CLIENT"},
                 {"name" : "TEZ_CLIENT"},
                 {"name" : "YARN_CLIENT"},
-                {"name" : "MAPREDUCE2_CLIENT"},
-                {"name" : "SPARK_CLIENT"}
+                {"name" : "MAPREDUCE2_CLIENT"}
             ],
             "cardinality" : "1"
         },
         {
             "name" : "hiveserver",
             "components" : [
-                {"name" : "WEBHCAT_SERVER"},
                 {"name" : "ZOOKEEPER_SERVER"},
                 {"name" : "HIVE_SERVER"},
                 {"name" : "SECONDARY_NAMENODE"},
@@ -77,14 +70,12 @@
                 {"name" : "METRICS_MONITOR"},
 
                 {"name" : "PIG"},
-                {"name" : "HCAT"},
                 {"name" : "SQOOP"},
                 {"name" : "HDFS_CLIENT"},
                 {"name" : "HIVE_CLIENT"},
                 {"name" : "ZOOKEEPER_CLIENT"},
                 {"name" : "YARN_CLIENT"},
-                {"name" : "MAPREDUCE2_CLIENT"},
-                {"name" : "SPARK_CLIENT"}
+                {"name" : "MAPREDUCE2_CLIENT"}
             ],
             "cardinality" : "1"
         }
@@ -92,6 +83,6 @@
     "Blueprints" : {
         "blueprint_name" : "threeNode",
         "stack_name" : "HDP",
-        "stack_version" : "2.3"
+        "stack_version" : "STACKVERSION"
     }
 }

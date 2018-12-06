@@ -20,14 +20,15 @@ repoIP=$(docker inspect --format "{{ .NetworkSettings.Networks.dockerdoop.IPAddr
 
 hdpUtilsVersion=$(curl "http://$repoIP/hdp/"  &> /dev/stdout | egrep -o 'HDP-UTILS-[\.0-9]*' | head -n1 | cut -c11-)
 
-stackversion=${hdpVersion:0:3}
 baseVersion=${hdpVersion:0:7}
+stackversion=${hdpVersion:0:3}
+majorversion=${hdpVersion:0:1}
 echo $stackversion
 
 #Put Repos
-wget http://public-repo-1.hortonworks.com/HDP/centos7/2.x/updates/$baseVersion/HDP-${hdpVersion}.xml -O HDP-${hdpVersion}.xml
-sed -i "s#http://public-repo-1.hortonworks.com/HDP/centos7/2.x/updates/$baseVersion#http://$repoIP/hdp/HDP-$baseVersion/#g" HDP-${hdpVersion}.xml
-sed -i "s#http://public-repo-1.hortonworks.com/HDP-GPL/centos7/2.x/updates/$baseVersion#http://$repoIP/hdp/HDP-GPL-$baseVersion/#g" HDP-${hdpVersion}.xml
+wget http://public-repo-1.hortonworks.com/HDP/centos7/${majorversion}.x/updates/$baseVersion/HDP-${hdpVersion}.xml -O HDP-${hdpVersion}.xml
+sed -i "s#http://public-repo-1.hortonworks.com/HDP/centos7/${majorversion}.x/updates/$baseVersion#http://$repoIP/hdp/HDP-$baseVersion/#g" HDP-${hdpVersion}.xml
+sed -i "s#http://public-repo-1.hortonworks.com/HDP-GPL/centos7/${majorversion}.x/updates/$baseVersion#http://$repoIP/hdp/HDP-GPL-$baseVersion/#g" HDP-${hdpVersion}.xml
 sed -i "s#http://public-repo-1.hortonworks.com/HDP-UTILS-$hdpUtilsVersion/repos/centos7#http://$repoIP/hdp/HDP-UTILS-$hdpUtilsVersion/#g" HDP-${hdpVersion}.xml
 
 docker cp HDP-${hdpVersion}.xml $ambariServerContainerName:/version_definitions_HDP-${hdpVersion}.xml

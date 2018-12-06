@@ -3,15 +3,12 @@ DockerDoop provides a solution for running HDP on Docker. It was designed to str
 
 This solution is an intermediate step between the HDP Sandbox and multi-machine HDP installations for **dev/test workloads**. With DockerDoop, multi-node HDP clusters can be installed quickly and easily on a single machine with minimal resource requirements. 
 
-8GB RAM and 50GB disk is recommended for the multinode sample configuration. 6GB or less RAM may be viable for smaller clusters.
+8GB RAM and 50GB disk is recommended for the multinode sample configuration. 6GB or less RAM is viable for smaller clusters.
 
-## Updates September 27, 2017
-1. Upgraded to Centos 7
-2. Upgraded to OpenJDK 8
-3. Created separate HDP repo container
-4. Refactored images
-5. Made HDP and Ambari versions configurable
-6. Added support for Ambari mPacks (Defaults: HDF, HDP Search)
+## Updates December 6, 2018
+1. Updated to support Ambari 2.7.1.0, HDP 3.0.1, HDF 3.3, and HDPSearch 4.0
+2. Added support for Docker on YARN. Containers launched by YARN are created as peers to DockerDoop containers
+3. Adding YARN quickstart blueprint that automatically configures Docker support in YARN.
 
 ## Install Modes
 1. In a local VM
@@ -23,9 +20,13 @@ This solution is an intermediate step between the HDP Sandbox and multi-machine 
 
 * CentOS 7 (Other Linux operating systems should work as well)
 * Docker 17 
--https://docs.docker.com/engine/installation/linux/docker-ce/centos/
+```
+yum install -y yum-utils device-mapper-persistent-data lvm2
+yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+yum install -y docker-ce
+```
 
-* Configure for External Network Access to Nodes    
+* (Optional) Configure for External Network Access to Nodes    
   1. Add multiple IPs to Host OS (N+1 for N nodes)  
     * Use VMWare/VirtualBox/etc. to add network adaptors to the VM
     * For example, the threeNode-sample configuration requires 4 IPs: 1 for host, 3 for the cluster.  
@@ -59,13 +60,13 @@ HDP can be installed manually or through Ambari Blueprints. Example blueprint fi
 * hostNames (required)
 * externalIPs (required for external access to nodes)
 
-* ambariVersion (required) (Default is 2.6.2.0)
-* hdpVersion (required to use blueprint script) (Default is 2.6.5.0-292)
+* ambariVersion (required) (Default is 2.7.1.0)
+* hdpVersion (required to use blueprint script) (Default is 3.0.1.0-187)
 * blueprintName (required to use blueprint script)
 * blueprintFile (required to use blueprint script)
 * blueprintHostMappingFile (required to use blueprint script)  
 
-Note: HDP build number must be specified. It can be found in the HDP repo path (e.g. https://docs.hortonworks.com/HDPDocuments/Ambari-2.6.2.2/bk_ambari-installation/content/hdp_26_repositories.html).
+Note: HDP build number must be specified. It can be found in the HDP repo path (e.g. https://docs.hortonworks.com/HDPDocuments/Ambari-2.7.1.0/bk_ambari-installation-ppc/content/hdp_30_repositories.html).
 
 ## Preparing Docker Images
 Three docker images are included. Note that the HDP and Ambari versions are configurable, and multiple versions can exist on the same host. Ambari mPacks (such as for HDF or HDPSearch) are also configurable.
@@ -75,7 +76,7 @@ Three docker images are included. Note that the HDP and Ambari versions are conf
 2. **Ambari Agent Image:** This container runs an Ambari Agent process, but no Ambari Server. For multi-node cluster deployments, all nodes except the node designated as the Ambari Server node will be based on this image.
 
    ```
-   ./scripts/build_images.sh [--noRepo] [--ambariVersion=2.6.2.0] [--hdpVersion=2.6.5.0-292] [--mPack={bundleURL}]
+   ./scripts/build_images.sh [--noRepo] [--ambariVersion=2.7.1.0] [--hdpVersion=3.0.1.0-187] [--mPack={bundleURL}]
    ```
 
 ## Creating a Cluster
@@ -91,7 +92,7 @@ Once a cluster is set up, the Ambari UI or blueprints can be used to install the
 To use blueprints, add the blueprint fields to the ini file to use the included script. Sample blueprints and host mapping files are provided in the blueprints directory.
 
 ```
-/scripts/installCluster.sh threeNode-sample.ini
+/scripts/installCluster.sh yarnquickstart-sample.ini
 ```
 
 ## Supporting Files/Scripts
@@ -100,13 +101,13 @@ This project includes several additional scripts:
 1. **Install Status:** Monitor the status of a blueprint install. Note: the Ambari UI can also be used.
 
       ```
-      ./scripts/installStatus.sh threeNode-sample.ini
+      ./scripts/installStatus.sh yarnquickstart-sample.ini
       ```
 
 2. **Stats:** Monitor the resource utilization of a cluster or all clusters on a machine using the built in `docker status` command
         
     ```
-    ./scripts/stats.sh threeNode-sample.ini 
+    ./scripts/stats.sh yarnquickstart-sample.ini 
     ```
     ```
     ./scripts/stats.sh
@@ -115,28 +116,19 @@ This project includes several additional scripts:
 3. **Create Node:** Create a new node. Note: does not install services or add to Ambari
         
     ```
-    ./scripts/createNode.sh  HWorker4 HMaster 172.16.96.140 HCluster
+    ./scripts/createNode.sh  worker1 namenode 172.16.96.140 yarnquickstart
    ```
 
 4. **Export Blueprint:** Export blueprint from Ambari
 
     ```
-    ./scripts/exportBlueprint.sh threeNode-sample.ini
+    ./scripts/exportBlueprint.sh yarnquickstart-sample.ini
     ```
 
-5. **Start/Stop Cluster:** Start and stop the docker containers running the cluster. Similar to powering on/off machines.
+5. **Destroy Cluster:** Completely remove all nodes from the cluster. Not reversible!
 
     ```
-    ./scripts/stopCluster.sh threeNode-sample.ini
-    ```  
-    ```
-    ./scripts/startCluster.sh threeNode-sample.ini
-    ```
-
-6. **Destroy Cluster:** Completely remove all nodes from the cluster. Not reversible!
-
-    ```
-    ./scripts/destroyCluster.sh threeNode-sample.ini
+    ./scripts/destroyCluster.sh yarnquickstart-sample.ini
     ```
 
 ## Notes
