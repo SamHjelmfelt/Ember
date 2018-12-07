@@ -20,11 +20,11 @@ RUN yum -y install sudo openssh-server openssh-clients unzip ntp wget yum-priori
 RUN yum install -y yum-utils device-mapper-persistent-data lvm2
 RUN yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
 RUN yum install -y docker-ce
-RUN echo '#!/bin/bash \n \
-exec docker -H "unix:///host/var/run/docker.sock" "$@"' > /opt/dockerwrapper.sh
-RUN chmod +x /opt/dockerwrapper.sh
-RUN useradd dockeruser
 
+#Create docker wrapper with the custom docker.sock location. YARN does not offer a way to customize this.
+RUN echo "#!/bin/bash"  > /opt/dockerwrapper.sh
+RUN echo 'exec docker -H "unix:///host/var/run/docker.sock" "$@"' >> /opt/dockerwrapper.sh
+RUN chmod +x /opt/dockerwrapper.sh
 
 # default password
 RUN echo "root:hadoop" | chpasswd

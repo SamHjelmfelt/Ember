@@ -1,14 +1,15 @@
-# DockerDoop
-DockerDoop provides a solution for running HDP on Docker. It was designed to streamline HDP training, administrative testing, and certain development tasks.
+# Amber
+Amber provides a solution for running Ambari clusters on Docker. It was designed to streamline training, testing, and certain development tasks.
 
-This solution is an intermediate step between the HDP Sandbox and multi-machine HDP installations for **dev/test workloads**. With DockerDoop, multi-node HDP clusters can be installed quickly and easily on a single machine with minimal resource requirements. 
+With Amber, multi-node **dev/test** clusters can be installed quickly and easily on a single machine with minimal resource requirements. 
 
-8GB RAM and 50GB disk is recommended for the multinode sample configuration. 6GB or less RAM is viable for smaller clusters.
+8GB RAM and 50GB disk is recommended for the threeNode sample configuration. 6GB RAM or less is viable for smaller clusters.
 
-## Updates December 6, 2018
+## Updates December 7, 2018
 1. Updated to support Ambari 2.7.1.0, HDP 3.0.1, HDF 3.3, and HDPSearch 4.0
-2. Added support for Docker on YARN. Containers launched by YARN are created as peers to DockerDoop containers
-3. Adding YARN quickstart blueprint that automatically configures Docker support in YARN.
+2. Added support for Docker on YARN. Containers launched by YARN are created as peers to the Ambari containers
+3. Added YARN quickstart blueprint that automatically configures Docker support in YARN
+4. Refactored scripts
 
 ## Install Modes
 1. In a local VM
@@ -20,11 +21,11 @@ This solution is an intermediate step between the HDP Sandbox and multi-machine 
 
 * CentOS 7 (Other Linux operating systems should work as well)
 * Docker 17 
-```
-yum install -y yum-utils device-mapper-persistent-data lvm2
-yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
-yum install -y docker-ce
-```
+    ```
+    yum install -y yum-utils device-mapper-persistent-data lvm2
+    yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+    yum install -y docker-ce
+    ```
 
 * (Optional) Configure for External Network Access to Nodes    
   1. Add multiple IPs to Host OS (N+1 for N nodes)  
@@ -49,9 +50,9 @@ yum install -y docker-ce
       ```
 
 ## Configuration
-An .ini file is required to define hostnames and a cluster name. An external IP list can be defined to allow external access to nodes. 
+An .ini file is required to define hostnames and a cluster name. An external IP list can be defined to allow external access to the containers. 
 
-HDP can be installed manually or through Ambari Blueprints. Example blueprint files are provided in the blueprints folder.
+HDP can be installed manually or through Ambari Blueprints. Example blueprint files are provided in the samples folder.
 
 #### INI Fields:
 
@@ -64,82 +65,80 @@ HDP can be installed manually or through Ambari Blueprints. Example blueprint fi
 * hdpVersion (required to use blueprint script) (Default is 3.0.1.0-187)
 * blueprintName (required to use blueprint script)
 * blueprintFile (required to use blueprint script)
-* blueprintHostMappingFile (required to use blueprint script)  
+* blueprintHostMappingFile (required to use blueprint script) 
+* mPacks (Optional, comma separated list of mPacks to include in the docker images)
+* buildRepo=true (Optional, creates a container with a local yum repo for HDP) 
 
-Note: HDP build number must be specified. It can be found in the HDP repo path (e.g. https://docs.hortonworks.com/HDPDocuments/Ambari-2.7.1.0/bk_ambari-installation-ppc/content/hdp_30_repositories.html).
+Note: The HDP build number must be specified. It can be found in the HDP repo path (e.g. https://docs.hortonworks.com/HDPDocuments/Ambari-2.7.1.0/bk_ambari-installation-ppc/content/hdp_30_repositories.html).
 
 ## Preparing Docker Images
-Three docker images are included. Note that the HDP and Ambari versions are configurable, and multiple versions can exist on the same host. Ambari mPacks (such as for HDF or HDPSearch) are also configurable.
+Amber uses three docker images. HDP and Ambari versions are configurable, and multiple versions can exist on the same host. Ambari mPacks (such as for HDF or HDPSearch) are also configurable.
 
-1. **HDP Repo Image (Optional)** This container installs and runs a local HDP repo in its own docker container. Creating this image will take some time.
+1. **HDP Repo Image (Optional)** This container installs and runs a local HDP repo. Creating this image will take time initially, but will greatly speed up all future HDP installs.
 1. **Ambari Server Image:** This container installs and runs the Ambari Server and Ambari Agent. If mPacks are defined, they will be installed into Ambari Server as well.
-2. **Ambari Agent Image:** This container runs an Ambari Agent process, but no Ambari Server. For multi-node cluster deployments, all nodes except the node designated as the Ambari Server node will be based on this image.
+2. **Ambari Agent Image:** This container runs an Ambari Agent process. For multi-node cluster deployments, all nodes except the node designated as the Ambari Server node will be based on this image.
 
-   ```
-   ./scripts/build_images.sh [--noRepo] [--ambariVersion=2.7.1.0] [--hdpVersion=3.0.1.0-187] [--mPack={bundleURL}]
-   ```
+```
+./amber.sh buildImages samples/yarnquickstart/yarnquickstart-sample.ini
+```
 
 ## Creating a Cluster
 Once the Docker images are built, the cluster nodes can be created and Ambari can be started.
 
 ```
-./scripts/createCluster.sh threeNode-sample.ini
+./amber.sh createCluster samples/yarnquickstart/yarnquickstart-sample.ini
 ```
 
 ## Installing HDP
-Once a cluster is set up, the Ambari UI or blueprints can be used to install the cluster. 
+Once the Ambari cluster is created, the Ambari UI or blueprints can be used to install the rest of the cluster services. 
 
-To use blueprints, add the blueprint fields to the ini file to use the included script. Sample blueprints and host mapping files are provided in the blueprints directory.
+To use blueprints, add blueprint fields to the ini file to use the included script. Sample blueprints and host mapping files are provided in the samples directory.
 
 ```
-/scripts/installCluster.sh yarnquickstart-sample.ini
+./amber.sh installCluster samples/yarnquickstart/yarnquickstart-sample.ini
 ```
 
 ## Supporting Files/Scripts
-This project includes several additional scripts: 
+This project includes several additional utility methods: 
 
-1. **Install Status:** Monitor the status of a blueprint install. Note: the Ambari UI can also be used.
+1. **Install Status:** Monitor the status of a cluster install (the Ambari UI could also be used)
 
-      ```
-      ./scripts/installStatus.sh yarnquickstart-sample.ini
-      ```
+    ```
+    ./amber.sh installStatus samples/yarnquickstart/yarnquickstart-sample.ini
+    ```
 
-2. **Stats:** Monitor the resource utilization of a cluster or all clusters on a machine using the built in `docker status` command
+2. **Stats:** Monitor the resource utilization of a cluster based on the built-in `docker status` command
         
     ```
-    ./scripts/stats.sh yarnquickstart-sample.ini 
-    ```
-    ```
-    ./scripts/stats.sh
+    ./amber.sh stats samples/yarnquickstart/yarnquickstart-sample.ini
     ```
 
 3. **Create Node:** Create a new node. Note: does not install services or add to Ambari
         
     ```
-    ./scripts/createNode.sh  worker1 namenode 172.16.96.140 yarnquickstart
-   ```
+    ./amber.sh createNode samples/yarnquickstart/yarnquickstart-sample.ini worker1 172.16.96.140
+    ```
 
 4. **Export Blueprint:** Export blueprint from Ambari
 
     ```
-    ./scripts/exportBlueprint.sh yarnquickstart-sample.ini
+    ./amber.sh exportBlueprint samples/yarnquickstart/yarnquickstart-sample.ini > blueprint.json
     ```
 
 5. **Destroy Cluster:** Completely remove all nodes from the cluster. Not reversible!
 
     ```
-    ./scripts/destroyCluster.sh yarnquickstart-sample.ini
+    ./amber.sh destroyCluster samples/yarnquickstart/yarnquickstart-sample.ini
     ```
 
 ## Notes
-1. A local repository to really accelerate install processes.
+1. A local repository to really accelerate installs.
 2. Multiple clusters can reside on the same machine as long as the cluster names (and external IPs) are unique. The docker container names have ".{clusterName}" appended.
-3. Use the stop and start functionality to keep multiple cluster versions and/or configurations.
-4. The containers are configured to autostart if they were not manually stopped. Run this command to autostart the docker service.
+3. The containers are configured to autostart if they were not manually stopped. Run this command to autostart the docker service.
    ```
-   chkconfig docker on
+   systemctl enable docker
    ```
-5. Installing Oozie requires following these steps: https://docs.hortonworks.com/HDPDocuments/Ambari-2.7.1.0/managing-and-monitoring-ambari/content/amb_enable_the_oozie_ui.html
+4. Installing Oozie requires following these steps: https://docs.hortonworks.com/HDPDocuments/Ambari-2.7.1.0/managing-and-monitoring-ambari/content/amb_enable_the_oozie_ui.html
  
 ## Potential Enhancements
 1. Additional sample blueprints

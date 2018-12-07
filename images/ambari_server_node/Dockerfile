@@ -1,5 +1,5 @@
 ARG ambariVersion
-FROM 'dockerdoop/ambari_agent_node_'$ambariVersion
+FROM 'amber/ambari_agent_node_'$ambariVersion
 
 ARG mPacks=""
 
