@@ -5,6 +5,9 @@ With Amber, multi-node **dev/test** clusters can be installed quickly and easily
 
 8GB RAM and 50GB disk is recommended for the threeNode sample configuration. 6GB RAM or less is viable for smaller clusters.
 
+## Update December 10, 2018
+1. Pre-built images can now be pulled from docker hub
+
 ## Updates December 7, 2018
 1. Updated to support Ambari 2.7.1.0, HDP 3.0.1, HDF 3.3, and HDPSearch 4.0
 2. Added support for Docker on YARN. Containers launched by YARN are created as peers to the Ambari containers
@@ -17,9 +20,14 @@ With Amber, multi-node **dev/test** clusters can be installed quickly and easily
 3. On a shared machine
     - Collaborative clusters
 
+##NEW: Quickstart
+A pre-built version of the yarnquickstart sample been loaded into docker hub. It is an additional 2.8 GB download on top of the ambari server image (for a total of ~4.8GB). The port mapping can be customized.
+```
+./amber.sh createFromPrebuiltSample samples/yarnquickstart/yarnquickstart-sample.ini "-p 8080:8080 -p 8088:8088 -p 8042:8042"
+```
+
 ## Prerequisites
 
-* CentOS 7 (Other Linux operating systems should work as well)
 * Docker 17 
     ```
     yum install -y yum-utils device-mapper-persistent-data lvm2
@@ -71,7 +79,7 @@ HDP can be installed manually or through Ambari Blueprints. Example blueprint fi
 
 Note: The HDP build number must be specified. It can be found in the HDP repo path (e.g. https://docs.hortonworks.com/HDPDocuments/Ambari-2.7.1.0/bk_ambari-installation-ppc/content/hdp_30_repositories.html).
 
-## Preparing Docker Images
+## Docker images
 Amber uses three docker images. HDP and Ambari versions are configurable, and multiple versions can exist on the same host. Ambari mPacks (such as for HDF or HDPSearch) are also configurable.
 
 1. **HDP Repo Image (Optional)** This container installs and runs a local HDP repo. Creating this image will take time initially, but will greatly speed up all future HDP installs.
@@ -79,12 +87,13 @@ Amber uses three docker images. HDP and Ambari versions are configurable, and mu
 2. **Ambari Agent Image:** This container runs an Ambari Agent process. For multi-node cluster deployments, all nodes except the node designated as the Ambari Server node will be based on this image.
 
 ```
+./amber.sh pullImages samples/yarnquickstart/yarnquickstart-sample.ini
+or
 ./amber.sh buildImages samples/yarnquickstart/yarnquickstart-sample.ini
 ```
 
 ## Creating a Cluster
-Once the Docker images are built, the cluster nodes can be created and Ambari can be started.
-
+A blank Ambari cluster is the starting point:
 ```
 ./amber.sh createCluster samples/yarnquickstart/yarnquickstart-sample.ini
 ```
@@ -141,8 +150,9 @@ This project includes several additional utility methods:
 4. Installing Oozie requires following these steps: https://docs.hortonworks.com/HDPDocuments/Ambari-2.7.1.0/managing-and-monitoring-ambari/content/amb_enable_the_oozie_ui.html
  
 ## Potential Enhancements
-1. Additional sample blueprints
+1. Additional samples
     - HA
+    - HDF
     - Standalone use cases (streaming, data science, batch, etc.)
 2. Add Kerberos support
 3. Add local repo for mPack services

@@ -13,9 +13,35 @@
     {
       "container-executor" : {
         "properties" : {
-          "docker_trusted_registries" : "library",
+          "docker_trusted_registries" : "library,openwhisk",
           "docker_module_enabled" : "true",
           "docker_binary" : "/opt/dockerwrapper.sh"
+        }
+      }
+    },
+    {
+      "hadoop-env" : {
+        "properties" : {
+          "hadoop_heapsize" : "512",
+          "dtnode_heapsize" : "512m",
+          "namenode_heapsize" : "512m"
+        }
+      }
+    },
+    {
+      "yarn-env" : {
+        "properties" : {
+            "yarn_heapsize" : "512",
+            "apptimelineserver_heapsize" : "512",
+            "resourcemanager_heapsize" : "512",
+            "nodemanager_heapsize" : "512"
+        }
+      }
+    },
+    {
+      "zookeeper-env" : {
+        "properties" : {
+          "zk_server_heapsize" : "512m"
         }
       }
     }],
@@ -23,19 +49,22 @@
         {
             "name" : "all",
             "components" : [
-                {"name" : "HISTORYSERVER"},
-                {"name" : "NAMENODE"},
-                {"name" : "APP_TIMELINE_SERVER"},
-                {"name" : "NODEMANAGER"},
-                {"name" : "DATANODE"},
-                {"name" : "RESOURCEMANAGER"},
                 {"name" : "ZOOKEEPER_SERVER"},
-                {"name" : "SECONDARY_NAMENODE"},
 
-                {"name" : "HDFS_CLIENT"},
+                {"name" : "NAMENODE"},
+                {"name" : "SECONDARY_NAMENODE"},
+                {"name" : "DATANODE"},
+
+                {"name" : "HISTORYSERVER"},
+                {"name" : "RESOURCEMANAGER"},
+                {"name" : "APP_TIMELINE_SERVER"},
+                {"name" : "YARN_REGISTRY_DNS"},
+                {"name" : "NODEMANAGER"},
+
                 {"name" : "ZOOKEEPER_CLIENT"},
-                {"name" : "YARN_CLIENT"},
-                {"name" : "MAPREDUCE2_CLIENT"}
+                {"name" : "HDFS_CLIENT"},
+                {"name" : "MAPREDUCE2_CLIENT"},
+                {"name" : "YARN_CLIENT"}
             ],
             "cardinality" : "1"
         }

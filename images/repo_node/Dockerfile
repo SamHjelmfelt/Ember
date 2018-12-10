@@ -1,5 +1,5 @@
 FROM centos/systemd
-ARG hdpVersion="2.6.5.0-292"
+ARG hdpVersion="3.0.1.0-187"
 
 MAINTAINER Sam Hjelmfelt, samhjelmfelt@yahoo.com
 

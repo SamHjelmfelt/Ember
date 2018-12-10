@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ports=(22 2181 3000 3372 3373 4040 6627 6700 6701 6702 6703 8010 8020 8025 8030 8032 8050 8080 8081 8088 8141 9000 9080 9081 9082 9083 9084 9085 9086 9087 9999 9933 10000 10020 11000 18080 19888 45454 50010 50020 50060 50070 50075 50090 50111)
+ports=(22 2181 3000 3372 3373 4040 6627 6700 6701 6702 6703 8010 8020 8025 8030 8032 8050 8080 53 8081 8088 8042 8141 9000 9080 9081 9082 9083 9084 9085 9086 9087 9999 9933 10000 10020 11000 18080 19888 45454 50010 50020 50060 50070 50075 50090 50111)
 hdf_ports=(9090 61080 6667 8744 8000 7788)
 networkName="amber"
 
@@ -23,14 +23,43 @@ buildRepo=$(awk -F "=" '/buildRepo/ {print $2}' $iniFile)
 ambariServerHostName=$(awk -F "=" '/ambariServerHostName/ {print $2}' $iniFile).$clusterName
 ambariServerInternalIP=$(docker inspect --format "{{ .NetworkSettings.Networks.$networkName.IPAddress }}" $ambariServerHostName 2> /dev/null)
 
-repoNodeContainerName="reponode_${hdpVersion//./-}"
-repoNodeImageName="amber/reponode_${hdpVersion//./-}"
-agentImageName="amber/ambari_agent_node_$ambariVersion"
-serverImageName="amber/ambari_server_node_$ambariVersion"
+repoNodeContainerName="amber_repo_node_$hdpVersion"
+repoNodeImageName="samhjelmfelt/amber_repo_node:$hdpVersion"
+serverImageName="samhjelmfelt/amber_server_node:$ambariVersion"
+agentImageName="samhjelmfelt/amber_agent_node:$ambariVersion"
 
+function pullImages(){
+    docker network ls | grep $networkName
+    if [ $? -ne 0 ]; then
+      docker network create $networkName
+      echo "Created $networkName network"
+    fi
+
+    if [ -z $buildRepo ]; then
+      echo "Not pulling local repo"
+    else
+      echo "Pulling and starting local repo for HDP $hdpVersion"
+      docker pull $repoNodeImageName
+      docker run --privileged=true \
+                  --security-opt seccomp:unconfined \
+                  --cap-add=SYS_ADMIN \
+                  --dns 8.8.8.8 \
+                  --name $repoNodeContainerName \
+                  -h $repoNodeContainerName \
+                  --net $networkName \
+                  --restart unless-stopped \
+                  -itd \
+                  $repoNodeImageName  \
+          ||
+      docker start $repoNodeContainerName
+      docker network connect bridge $repoNodeContainerName
+    fi
+    docker pull $agentImageName
+    docker pull $serverImageName
+}
 function buildImages(){
 
-    if [ -z buildRepo ]; then
+    if [ -z $buildRepo ]; then
       echo "Not creating local repo"
     else
       echo "Creating local repo for HDP $hdpVersion"
@@ -85,24 +114,27 @@ function createNode(){
 
     containerName="$nodeName.$clusterName"
     imageName=""
+    YARN_DNS_IP=""
 
     if [ $containerName != $ambariServerHostName ]; then
         echo "Creating Ambari agent node: $nodeName. Ambari server: $ambariServerHostName"
         imageName=$agentImageName
+        YARN_DNS_IP=$ambariServerInternalIP
     else
         echo "Creating Ambari server node: $nodeName"
         imageName=$serverImageName
+        YARN_DNS_IP=127.0.0.1
     fi
 
     docker run --privileged \
                 --stop-signal=RTMIN+3 \
                 --restart unless-stopped \
-                --dns 8.8.8.8 \
                 $portParams \
                 --net $networkName \
+                --dns=8.8.8.8 \
+                --dns=$YARN_DNS_IP \
                 --name $containerName \
                 -h $containerName \
-                --dns-search=$clusterName \
                 -e AMBARI_SERVER=$ambariServerHostName \
                 -e DOCKER_HOST=unix:///host/var/run/docker.sock \
                 -v "/var/run/docker.sock:/host/var/run/docker.sock" \
@@ -204,8 +236,47 @@ function destroyCluster(){
 function stats(){
     docker stats $(docker ps --format '{{.Names}}' | grep ".*.$clusterName")
 }
+function createFromPrebuiltSample(){
+
+    if [ $clusterName != "yarnquickstart" ]; then
+        echo "Only yarnquickstart is supported at this time"
+    fi
+    imageName="samhjelmfelt/amber_yarnquickstart:$hdpVersion"
+
+    ports=$1
+
+    docker pull $agentImageName
+    docker pull $serverImageName
+    docker pull $imageName
+    docker run \
+            --privileged \
+            --restart unless-stopped \
+            --net $networkName \
+            --name $ambariServerHostName \
+            --hostname $ambariServerHostName \
+            -e DOCKER_HOST=unix:///host/var/run/docker.sock \
+            -v "/var/run/docker.sock:/host/var/run/docker.sock" \
+            -v "/var/lib/docker/containers:/containers" \
+            -v "/sys/fs/cgroup:/sys/fs/cgroup" \
+            $ports \
+            -d \
+            $imageName
+
+    internalIP=$(docker inspect --format "{{ .NetworkSettings.Networks.$networkName.IPAddress }}" $ambariServerHostName)
+
+    echo "Starting Ambari..."
+    docker exec -it $ambariServerHostName bash -c "ambari-server start; ambari-agent start"
+
+    echo "Starting all services..."
+    curl -i -u admin:admin -H "X-Requested-By: amber"  -X PUT  \
+        -d '{"RequestInfo":{"context":"_PARSE_.START.ALL_SERVICES","operation_level":{"level":"CLUSTER","cluster_name":"'$clusterName'"}},"Body":{"ServiceInfo":{"state":"STARTED"}}}' \
+        "http://$internalIP:8080/api/v1/clusters/$clusterName/services"
+}
 
 case "$1" in
+  pullImages)
+      pullImages
+      ;;
   buildImages)
       buildImages
       ;;
@@ -230,8 +301,12 @@ case "$1" in
   stats)
       stats
       ;;
+  createFromPrebuiltSample)
+      createFromPrebuiltSample "$3"
+      ;;
   *)
       echo "Usage:"
+      echo "  $0 pullImages      <configuration.ini>"
       echo "  $0 buildImages     <configuration.ini>"
       echo "  $0 createCluster   <configuration.ini>"
       echo "  $0 createNode      <configuration.ini> <nodeName> [<external IP>]"
@@ -240,5 +315,6 @@ case "$1" in
       echo "  $0 installStatus   <configuration.ini>"
       echo "  $0 destroyCluster  <configuration.ini>"
       echo "  $0 stats           <configuration.ini>"
+      echo "  $0 createFromPrebuiltSample <configuration.ini> [<docker port options>]"
       ;;
 esac

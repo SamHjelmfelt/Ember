@@ -5,7 +5,7 @@
   "host_groups":[
     { 
       "name":"all",
-      "hosts":[ { "fqdn":"namenode.yarnquickstart" } ]
+      "hosts":[ { "fqdn":"resourcemanager.yarnquickstart" } ]
     }
   ]
 }
