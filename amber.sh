@@ -272,10 +272,16 @@ function createFromPrebuiltSample(){
     echo "Starting Ambari..."
     docker exec -it $ambariServerHostName bash -c "ambari-server start; ambari-agent start"
 
-    echo "Starting all services..."
-    curl -i -u admin:admin -H "X-Requested-By: amber"  -X PUT  \
-        -d '{"RequestInfo":{"context":"_PARSE_.START.ALL_SERVICES","operation_level":{"level":"CLUSTER","cluster_name":"'$clusterName'"}},"Body":{"ServiceInfo":{"state":"STARTED"}}}' \
-        "http://localhost:8080/api/v1/clusters/$clusterName/services"
+    output=""
+    echo "Waiting for agent heartbeat..."
+    while [[ ${output} != *"Accepted"* ]]; do
+        output=$(curl -s -u admin:admin -H "X-Requested-By: amber"  -X PUT  \
+            -d '{"RequestInfo":{"context":"_PARSE_.START.ALL_SERVICES","operation_level":{"level":"CLUSTER","cluster_name":"'$clusterName'"}},"Body":{"ServiceInfo":{"state":"STARTED"}}}' \
+            "http://localhost:8080/api/v1/clusters/$clusterName/services")
+
+        sleep 1
+    done
+    echo "Starting all services. Visit http://localhost:8080 to view the status"
 }
 
 case "$1" in
