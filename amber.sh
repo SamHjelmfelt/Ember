@@ -248,6 +248,13 @@ function createFromPrebuiltSample(){
     docker pull $agentImageName
     docker pull $serverImageName
     docker pull $imageName
+    
+    docker network ls | grep $networkName
+    if [ $? -ne 0 ]; then
+        docker network create $networkName
+        echo "Created $networkName network"
+    fi
+
     docker run \
             --privileged \
             --restart unless-stopped \
