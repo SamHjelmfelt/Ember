@@ -248,7 +248,7 @@ function createFromPrebuiltSample(){
     docker pull $agentImageName
     docker pull $serverImageName
     docker pull $imageName
-    
+
     docker network ls | grep $networkName
     if [ $? -ne 0 ]; then
         docker network create $networkName
@@ -269,15 +269,13 @@ function createFromPrebuiltSample(){
             -d \
             $imageName
 
-    internalIP=$(docker inspect --format "{{ .NetworkSettings.Networks.$networkName.IPAddress }}" $ambariServerHostName)
-
     echo "Starting Ambari..."
     docker exec -it $ambariServerHostName bash -c "ambari-server start; ambari-agent start"
 
     echo "Starting all services..."
     curl -i -u admin:admin -H "X-Requested-By: amber"  -X PUT  \
         -d '{"RequestInfo":{"context":"_PARSE_.START.ALL_SERVICES","operation_level":{"level":"CLUSTER","cluster_name":"'$clusterName'"}},"Body":{"ServiceInfo":{"state":"STARTED"}}}' \
-        "http://$internalIP:8080/api/v1/clusters/$clusterName/services"
+        "http://localhost:8080/api/v1/clusters/$clusterName/services"
 }
 
 case "$1" in
