@@ -4,8 +4,22 @@ ports=(22 2181 3000 3372 3373 4040 6627 6700 6701 6702 6703 8010 8020 8025 8030 
 hdf_ports=(9090 61080 6667 8744 8000 7788)
 networkName="amber"
 
+function printUsage() {
+  echo "Usage:"
+  echo "  $0 pullImages               <configuration.ini>"
+  echo "  $0 buildImages              <configuration.ini>"
+  echo "  $0 createCluster            <configuration.ini>"
+  echo "  $0 createNode               <configuration.ini> <nodeName> [<external IP>]"
+  echo "  $0 exportBlueprint          <configuration.ini>"
+  echo "  $0 installCluster           <configuration.ini>"
+  echo "  $0 installStatus            <configuration.ini>"
+  echo "  $0 destroyCluster           <configuration.ini>"
+  echo "  $0 stats                    <configuration.ini>"
+  echo "  $0 createFromPrebuiltSample <configuration.ini> [<docker port options>]"
+}
+
 if [[ -z $2 ]]; then
-  echo "Usage: $0 $1 <configuration.ini> "
+  printUsage
   exit -1
 fi
 iniFile=$2
@@ -238,10 +252,7 @@ function stats(){
 }
 function createFromPrebuiltSample(){
 
-    if [ $clusterName != "yarnquickstart" ]; then
-        echo "Only yarnquickstart is supported at this time"
-    fi
-    imageName="samhjelmfelt/amber_yarnquickstart:$hdpVersion"
+    imageName="samhjelmfelt/amber_"$(echo "$clusterName" | awk '{print tolower($0)}')":$hdpVersion"
 
     ports=$1
 
@@ -254,11 +265,12 @@ function createFromPrebuiltSample(){
         docker network create $networkName
         echo "Created $networkName network"
     fi
-
+#--dns=127.0.0.1 \
     docker run \
             --privileged \
             --restart unless-stopped \
             --net $networkName \
+            --dns=8.8.8.8 \
             --name $ambariServerHostName \
             --hostname $ambariServerHostName \
             -e DOCKER_HOST=unix:///host/var/run/docker.sock \
@@ -275,9 +287,9 @@ function createFromPrebuiltSample(){
     output=""
     echo "Waiting for agent heartbeat..."
     while [[ ${output} != *"Accepted"* ]]; do
-        output=$(curl -s -u admin:admin -H "X-Requested-By: amber"  -X PUT  \
-            -d '{"RequestInfo":{"context":"_PARSE_.START.ALL_SERVICES","operation_level":{"level":"CLUSTER","cluster_name":"'$clusterName'"}},"Body":{"ServiceInfo":{"state":"STARTED"}}}' \
-            "http://localhost:8080/api/v1/clusters/$clusterName/services")
+        output=$(docker exec -it $ambariServerHostName bash -c "curl -s -u admin:admin -H \"X-Requested-By: amber\"  -X PUT  \
+            -d '{\"RequestInfo\":{\"context\":\"_PARSE_.START.ALL_SERVICES\",\"operation_level\":{\"level\":\"CLUSTER\",\"cluster_name\":\"'$clusterName'\"}},\"Body\":{\"ServiceInfo\":{\"state\":\"STARTED\"}}}' \
+            \"http://localhost:8080/api/v1/clusters/$clusterName/services\"")
 
         sleep 1
     done
@@ -316,16 +328,6 @@ case "$1" in
       createFromPrebuiltSample "$3"
       ;;
   *)
-      echo "Usage:"
-      echo "  $0 pullImages      <configuration.ini>"
-      echo "  $0 buildImages     <configuration.ini>"
-      echo "  $0 createCluster   <configuration.ini>"
-      echo "  $0 createNode      <configuration.ini> <nodeName> [<external IP>]"
-      echo "  $0 exportBlueprint <configuration.ini>"
-      echo "  $0 installCluster  <configuration.ini>"
-      echo "  $0 installStatus   <configuration.ini>"
-      echo "  $0 destroyCluster  <configuration.ini>"
-      echo "  $0 stats           <configuration.ini>"
-      echo "  $0 createFromPrebuiltSample <configuration.ini> [<docker port options>]"
+      printUsage
       ;;
 esac

@@ -1,0 +1,11 @@
+{
+  "blueprint":"nifiNode",
+  "default_password":"admin",
+  "repository_version": "REPOSITORYVERSION",
+  "host_groups":[
+    { 
+      "name":"all",
+      "hosts":[ { "fqdn":"nifi.nifiNode" } ]
+    }
+  ]
+}

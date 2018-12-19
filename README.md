@@ -21,9 +21,10 @@ With Amber, multi-node **dev/test** clusters can be installed quickly and easily
     - Collaborative clusters
 
 ##NEW: Quickstart
-A pre-built version of the yarnquickstart sample been loaded into docker hub. It is an additional 2.8 GB download on top of the ambari server image (for a total of ~4.8GB). The port mapping can be customized.
+Pre-built versions of the yarnquickstart and nifi samples have been loaded into docker hub. They are additional 3-5 GB downloads on top of the ambari server image. The port mapping can be customized.
 ```
 ./amber.sh createFromPrebuiltSample samples/yarnquickstart/yarnquickstart-sample.ini "-p 8080:8080 -p 8088:8088 -p 8042:8042"
+./amber.sh createFromPrebuiltSample samples/nifiNode/nifiNode-sample.ini "-p 8080:8080 -p 9090:9090 -p 61080:61080"
 ```
 
 ## Prerequisites
@@ -142,6 +143,11 @@ This project includes several additional utility methods:
 
 ## Notes
 1. A local repository to really accelerate installs.
+2. Ambari can be stopped when not in use to save on memory
+   ```
+   docker exec -it resourcemanager.yarnquickstart bash -c "ambari-server stop; ambari-agent stop"
+   docker exec -it resourcemanager.yarnquickstart bash -c "ambari-server start; ambari-agent start"
+   ```
 2. Multiple clusters can reside on the same machine as long as the cluster names (and external IPs) are unique. The docker container names have ".{clusterName}" appended.
 3. The containers are configured to autostart if they were not manually stopped. Run this command to autostart the docker service.
    ```

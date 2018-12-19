@@ -1,0 +1,36 @@
+{
+    "configurations" : [{
+          "nifi-ambari-config": {
+            "nifi.security.encrypt.configuration.password": "StrongPassword"
+          }
+        },
+        {
+          "nifi-registry-ambari-config": {
+            "nifi.registry.security.encrypt.configuration.password": "StrongPassword"
+          }
+        },
+        {
+          "nifi-registry-properties": {
+            "nifi.registry.db.password": "StrongPassword"
+          }
+        }
+    ],
+    "host_groups" : [
+        {
+            "name" : "all",
+            "components" : [
+                {"name" : "ZOOKEEPER_SERVER"},
+                {"name" : "ZOOKEEPER_CLIENT"},
+
+                {"name": "NIFI_MASTER"},
+                {"name": "NIFI_REGISTRY_MASTER"}
+            ],
+            "cardinality" : "1"
+        }
+    ],
+    "Blueprints" : {
+        "blueprint_name" : "nifiNode",
+        "stack_name" : "HDP",
+        "stack_version" : "STACKVERSION"
+    }
+}
