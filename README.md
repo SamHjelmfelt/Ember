@@ -3,9 +3,7 @@ Amber provides a solution for running Ambari cluster in Docker. It was designed 
 
 ## Update January 9, 2019
 1. Workarounds to support Docker on YARN (in Docker)
-2. Removed unnecessary Expose statements
-3. Fix for installs without a local repo node
-4. Ports can now be configured in ini file
+2. Ports can now be configured in ini file
 
 ## Update December 10, 2018
 1. Pre-built images can now be pulled from docker hub

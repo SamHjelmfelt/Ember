@@ -169,6 +169,13 @@ function createNode(){
                 -idt \
                 $imageName
 
+    if [ $containerName == $ambariServerHostName ]; then
+        for i in ${mPacks//,/ }; do
+            if [ -n "$i" ]; then
+                docker exec -i -t $containerName ambari-server install-mpack --mpack=$i;
+            fi;
+        done
+    fi
     docker exec -i -t $containerName /root/startup.sh
 
     internalIP=$(docker inspect --format "{{ .NetworkSettings.Networks.$networkName.IPAddress }}" $containerName)
