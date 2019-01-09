@@ -9,17 +9,11 @@ Amber provides a solution for running Ambari cluster in Docker. It was designed 
 1. Pre-built images can now be pulled from docker hub
 
 ## NEW: Quickstart
-Pre-built versions of the yarnquickstart and nifi samples have been loaded into docker hub. They are additional 3-5 GB downloads on top of the ambari server image. The port mapping can be customized.
+Pre-built versions of the yarnquickstart and nifi samples have been loaded into docker hub. They are additional 3-5 GB downloads on top of the ambari server image.
 ```
 ./amber.sh createFromPrebuiltSample samples/yarnquickstart/yarnquickstart-sample.ini
 ./amber.sh createFromPrebuiltSample samples/nifiNode/nifiNode-sample.ini
 ```
-
-## Install Modes
-1. In a local VM
-    - Sandboxed, "Cluster in a box"
-3. On a shared machine
-    - Collaborative clusters
 
 ## Prerequisites
 * 8GB RAM and 30GB disk is recommended for the threeNode sample configuration. 4GB RAM or less is viable for smaller clusters.
