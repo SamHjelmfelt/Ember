@@ -1,18 +1,20 @@
 # Amber
-Amber provides a solution for running Ambari clusters on Docker. It was designed to streamline training, testing, and certain development tasks.
+Amber provides a solution for running Ambari cluster in Docker. It was designed to streamline training, testing, and development by enabling multi-node **dev/test** clusters to be installed on a single machine with minimal resource requirements. 
 
-With Amber, multi-node **dev/test** clusters can be installed quickly and easily on a single machine with minimal resource requirements. 
-
-8GB RAM and 50GB disk is recommended for the threeNode sample configuration. 6GB RAM or less is viable for smaller clusters.
+## Update January 8, 2019
+1. Workarounds to support Docker on YARN (in Docker)
+2. Removed unnecessary Expose statements
+3. Fix for installs without a local repo node
 
 ## Update December 10, 2018
 1. Pre-built images can now be pulled from docker hub
 
-## Updates December 7, 2018
-1. Updated to support Ambari 2.7.1.0, HDP 3.0.1, HDF 3.3, and HDPSearch 4.0
-2. Added support for Docker on YARN. Containers launched by YARN are created as peers to the Ambari containers
-3. Added YARN quickstart blueprint that automatically configures Docker support in YARN
-4. Refactored scripts
+## NEW: Quickstart
+Pre-built versions of the yarnquickstart and nifi samples have been loaded into docker hub. They are additional 3-5 GB downloads on top of the ambari server image. The port mapping can be customized.
+```
+./amber.sh createFromPrebuiltSample samples/yarnquickstart/yarnquickstart-sample.ini "-p 8080:8080 -p 8088:8088 -p 8042:8042"
+./amber.sh createFromPrebuiltSample samples/nifiNode/nifiNode-sample.ini "-p 8080:8080 -p 9090:9090 -p 61080:61080"
+```
 
 ## Install Modes
 1. In a local VM
@@ -20,14 +22,8 @@ With Amber, multi-node **dev/test** clusters can be installed quickly and easily
 3. On a shared machine
     - Collaborative clusters
 
-##NEW: Quickstart
-Pre-built versions of the yarnquickstart and nifi samples have been loaded into docker hub. They are additional 3-5 GB downloads on top of the ambari server image. The port mapping can be customized.
-```
-./amber.sh createFromPrebuiltSample samples/yarnquickstart/yarnquickstart-sample.ini "-p 8080:8080 -p 8088:8088 -p 8042:8042"
-./amber.sh createFromPrebuiltSample samples/nifiNode/nifiNode-sample.ini "-p 8080:8080 -p 9090:9090 -p 61080:61080"
-```
-
 ## Prerequisites
+* 8GB RAM and 30GB disk is recommended for the threeNode sample configuration. 4GB RAM or less is viable for smaller clusters.
 
 * Docker 17 
     ```
