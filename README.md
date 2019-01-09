@@ -1,10 +1,11 @@
 # Amber
 Amber provides a solution for running Ambari cluster in Docker. It was designed to streamline training, testing, and development by enabling multi-node **dev/test** clusters to be installed on a single machine with minimal resource requirements. 
 
-## Update January 8, 2019
+## Update January 9, 2019
 1. Workarounds to support Docker on YARN (in Docker)
 2. Removed unnecessary Expose statements
 3. Fix for installs without a local repo node
+4. Ports can now be configured in ini file
 
 ## Update December 10, 2018
 1. Pre-built images can now be pulled from docker hub
@@ -12,8 +13,8 @@ Amber provides a solution for running Ambari cluster in Docker. It was designed 
 ## NEW: Quickstart
 Pre-built versions of the yarnquickstart and nifi samples have been loaded into docker hub. They are additional 3-5 GB downloads on top of the ambari server image. The port mapping can be customized.
 ```
-./amber.sh createFromPrebuiltSample samples/yarnquickstart/yarnquickstart-sample.ini "-p 8080:8080 -p 8088:8088 -p 8042:8042"
-./amber.sh createFromPrebuiltSample samples/nifiNode/nifiNode-sample.ini "-p 8080:8080 -p 9090:9090 -p 61080:61080"
+./amber.sh createFromPrebuiltSample samples/yarnquickstart/yarnquickstart-sample.ini
+./amber.sh createFromPrebuiltSample samples/nifiNode/nifiNode-sample.ini
 ```
 
 ## Install Modes
@@ -64,7 +65,8 @@ HDP can be installed manually or through Ambari Blueprints. Example blueprint fi
 * clusterName (required)
 * ambariServerHostName (required)
 * hostNames (required)
-* externalIPs (required for external access to nodes)
+* ports (Optional, comma separated list of ports to bind) (Default: all HDP and HDF ports)
+* externalIPs (Optional, only necessary for access from outside the host machine)
 
 * ambariVersion (required) (Default is 2.7.1.0)
 * hdpVersion (required to use blueprint script) (Default is 3.0.1.0-187)

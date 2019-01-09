@@ -1,7 +1,10 @@
 #!/bin/bash
 
-ports=(22 2181 3000 3372 3373 4040 6627 6700 6701 6702 6703 8010 8020 8025 8030 8032 8050 8080 53 8081 8088 8042 8141 9000 9080 9081 9082 9083 9084 9085 9086 9087 9999 9933 10000 10020 11000 18080 19888 45454 50010 50020 50060 50070 50075 50090 50111)
-hdf_ports=(9090 61080 6667 8744 8000 7788)
+all_ports=(2181 3000 3372 3373 4040 6627 6700 6701 6702 6703 8010 8020 8025 8030 8032 8050 8080 \
+        53 8081 8088 8042 8141 9000 9080 9081 9082 9083 9084 9085 9086 9087 9999 9933 10000 10020 \
+        11000 18080 19888 45454 50010 50020 50060 50070 50075 50090 50111 \
+        9090 61080 6667 8744 8000 7788)
+
 networkName="amber"
 
 function printUsage() {
@@ -15,7 +18,7 @@ function printUsage() {
   echo "  $0 installStatus            <configuration.ini>"
   echo "  $0 destroyCluster           <configuration.ini>"
   echo "  $0 stats                    <configuration.ini>"
-  echo "  $0 createFromPrebuiltSample <configuration.ini> [<docker port options>]"
+  echo "  $0 createFromPrebuiltSample <configuration.ini>"
 }
 
 if [[ -z $2 ]]; then
@@ -36,6 +39,14 @@ mPacks=$(awk -F "=" '/mPacks/ {print $2}' $iniFile)
 buildRepo=$(awk -F "=" '/buildRepo/ {print $2}' $iniFile)
 ambariServerHostName=$(awk -F "=" '/ambariServerHostName/ {print $2}' $iniFile).$clusterName
 ambariServerInternalIP=$(docker inspect --format "{{ .NetworkSettings.Networks.$networkName.IPAddress }}" $ambariServerHostName 2> /dev/null)
+portString=$(awk -F "=" '/ports/ {print $2}' $iniFile)
+
+if [ -z $portString ]; then
+  ports=${all_ports[@]}
+else
+  ports=($(echo "$portString" | tr ',' '\n'))
+fi
+
 
 repoNodeContainerName="amber_repo_node_$hdpVersion"
 repoNodeImageName="samhjelmfelt/amber_repo_node:$hdpVersion"
@@ -115,8 +126,9 @@ function createNode(){
         for i in ${ports[@]}; do
             portParams="$portParams -p $externalIP:$i:$i"
         done
-        for i in ${hdf_ports[@]}; do
-            portParams="$portParams -p $externalIP:$i:$i"
+    else
+        for i in ${ports[@]}; do
+            portParams="$portParams -p $i:$i"
         done
     fi
 
@@ -257,11 +269,15 @@ function createFromPrebuiltSample(){
 
     imageName="samhjelmfelt/amber_"$(echo "$clusterName" | awk '{print tolower($0)}')":$hdpVersion"
 
-    ports=$1
-
     docker pull $agentImageName
     docker pull $serverImageName
     docker pull $imageName
+
+    portParams=""
+    for i in ${ports[@]}; do
+        portParams="$portParams -p $i:$i"
+    done
+
 
     docker network ls | grep $networkName
     if [ $? -ne 0 ]; then
@@ -280,7 +296,7 @@ function createFromPrebuiltSample(){
             -v "/var/run/docker.sock:/host/var/run/docker.sock" \
             -v "/var/lib/docker/containers:/containers" \
             -v "/sys/fs/cgroup:/sys/fs/cgroup" \
-            $ports \
+            $portParams \
             -d \
             $imageName
 
@@ -328,7 +344,7 @@ case "$1" in
       stats
       ;;
   createFromPrebuiltSample)
-      createFromPrebuiltSample "$3"
+      createFromPrebuiltSample
       ;;
   *)
       printUsage

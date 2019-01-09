@@ -13,7 +13,7 @@
     {
       "container-executor" : {
         "properties" : {
-          "docker_trusted_registries" : "library,openwhisk",
+          "docker_trusted_registries" : "*",
           "docker_module_enabled" : "true",
           "docker_binary" : "/opt/dockerwrapper.sh"
         }
