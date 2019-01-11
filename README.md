@@ -20,6 +20,7 @@ Pre-built versions of the single node samples have been loaded into docker hub. 
 Docker images are composed of layers that can be shared by other images. This allows for a great reduction in the total size of images on disk and over the network. Amber's pre-built images are composed as much as possible to take advantage of this feature. 
 
 The following graph shows how the images built on top of each other. For example, Amber_Agent + Amber_Server + YarnQuickstart + HadoopKafka is a total of 5.44 GB in size, but all four layers are less than 3GB each and each can be reused for other containers.
+
 ![Image Sizes](ImageSizes.png)
 
 ## Prerequisites
