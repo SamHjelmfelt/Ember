@@ -16,7 +16,9 @@ function printUsage() {
   echo "  $0 exportBlueprint          <configuration.ini>"
   echo "  $0 installCluster           <configuration.ini>"
   echo "  $0 installStatus            <configuration.ini>"
-  echo "  $0 destroyCluster           <configuration.ini>"
+  echo "  $0 stopCluster              <configuration.ini>"
+  echo "  $0 startCluster             <configuration.ini>"
+  echo "  $0 removeCluster            <configuration.ini>"
   echo "  $0 stats                    <configuration.ini>"
   echo "  $0 createFromPrebuiltSample <configuration.ini>"
 }
@@ -265,10 +267,33 @@ function installStatus(){
         sleep 60
     done
 }
-function destroyCluster(){
+function removeCluster(){
     docker kill $(docker ps -a | grep ".*.$clusterName" | cut -f1 -d" ")
     docker rm -f $(docker ps -a | grep ".*.$clusterName" | cut -f1 -d" ")
 }
+function stopCluster(){
+    docker stop $(docker ps -a | grep ".*.$clusterName" | cut -f1 -d" ")
+}
+function startCluster(){
+    docker start $(docker ps -a | grep ".*.$clusterName" | cut -f1 -d" ")
+    startClusterServices
+}
+function startClusterServices(){
+    echo "Starting Ambari..."
+    docker exec -it $ambariServerHostName bash -c "ambari-server start; ambari-agent start"
+
+    output=""
+    echo "Waiting for agent heartbeat..."
+    while [[ ${output} != *"Accepted"* ]]; do
+        output=$(docker exec -it $ambariServerHostName bash -c "curl -s -u admin:admin -H \"X-Requested-By: amber\"  -X PUT  \
+            -d '{\"RequestInfo\":{\"context\":\"_PARSE_.START.ALL_SERVICES\",\"operation_level\":{\"level\":\"CLUSTER\",\"cluster_name\":\"'$clusterName'\"}},\"Body\":{\"ServiceInfo\":{\"state\":\"STARTED\"}}}' \
+            \"http://localhost:8080/api/v1/clusters/$clusterName/services\"")
+
+        sleep 1
+    done
+    echo "Starting all services. Visit http://localhost:8080 to view the status"
+}
+
 function stats(){
     docker stats $(docker ps --format '{{.Names}}' | grep ".*.$clusterName")
 }
@@ -307,19 +332,7 @@ function createFromPrebuiltSample(){
             -d \
             $imageName
 
-    echo "Starting Ambari..."
-    docker exec -it $ambariServerHostName bash -c "ambari-server start; ambari-agent start"
-
-    output=""
-    echo "Waiting for agent heartbeat..."
-    while [[ ${output} != *"Accepted"* ]]; do
-        output=$(docker exec -it $ambariServerHostName bash -c "curl -s -u admin:admin -H \"X-Requested-By: amber\"  -X PUT  \
-            -d '{\"RequestInfo\":{\"context\":\"_PARSE_.START.ALL_SERVICES\",\"operation_level\":{\"level\":\"CLUSTER\",\"cluster_name\":\"'$clusterName'\"}},\"Body\":{\"ServiceInfo\":{\"state\":\"STARTED\"}}}' \
-            \"http://localhost:8080/api/v1/clusters/$clusterName/services\"")
-
-        sleep 1
-    done
-    echo "Starting all services. Visit http://localhost:8080 to view the status"
+    startClusterServices
 }
 
 case "$1" in
@@ -344,8 +357,14 @@ case "$1" in
   installStatus)
       installStatus
       ;;
-  destroyCluster)
-      destroyCluster
+  stopCluster)
+      stopCluster
+      ;;
+  startCluster)
+      startCluster
+      ;;
+  removeCluster)
+      removeCluster
       ;;
   stats)
       stats

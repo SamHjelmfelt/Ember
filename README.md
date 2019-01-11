@@ -132,32 +132,43 @@ This project includes several additional utility methods:
     ```
     ./amber.sh exportBlueprint samples/yarnquickstart/yarnquickstart-sample.ini > blueprint.json
     ```
-
-5. **Destroy Cluster:** Completely remove all nodes from the cluster. Not reversible!
+    
+5. **Stop Cluster:** Stop cluster preserving configuration
 
     ```
-    ./amber.sh destroyCluster samples/yarnquickstart/yarnquickstart-sample.ini
+    ./amber.sh stopCluster samples/yarnquickstart/yarnquickstart-sample.ini
+    ```
+    
+6. **Start Cluster:** Restarts cluster (including all services) that was previously stopped
+
+    ```
+    ./amber.sh startCluster samples/yarnquickstart/yarnquickstart-sample.ini
+    ```
+    
+7. **Remove Cluster:** Completely remove all nodes from the cluster. Not reversible!
+
+    ```
+    ./amber.sh removeCluster samples/yarnquickstart/yarnquickstart-sample.ini
     ```
 
 ## Notes
-1. A local repository to really accelerate installs.
+1. A local repository will accelerate installs
 2. Ambari can be stopped when not in use to save on memory
    ```
    docker exec -it resourcemanager.yarnquickstart bash -c "ambari-server stop; ambari-agent stop"
    docker exec -it resourcemanager.yarnquickstart bash -c "ambari-server start; ambari-agent start"
    ```
 2. Multiple clusters can reside on the same machine as long as the cluster names (and external IPs) are unique. The docker container names have ".{clusterName}" appended.
-3. The containers are configured to autostart if they were not manually stopped. Run this command to autostart the docker service.
+3. The stop and start commands can be used to maintain multiple clusters on the same machine. Stopped clusters only require disk space.
+4. The containers are configured to autostart if they were not manually stopped. Run this command to autostart the docker service.
    ```
    systemctl enable docker
    ```
-4. Installing Oozie requires following these steps: https://docs.hortonworks.com/HDPDocuments/Ambari-2.7.1.0/managing-and-monitoring-ambari/content/amb_enable_the_oozie_ui.html
+5. Installing Oozie requires following these steps: https://docs.hortonworks.com/HDPDocuments/Ambari-2.7.1.0/managing-and-monitoring-ambari/content/amb_enable_the_oozie_ui.html
  
 ## Potential Enhancements
 1. Additional samples
     - HA
-    - HDF
-    - Standalone use cases (streaming, data science, batch, etc.)
 2. Add Kerberos support
 3. Add local repo for mPack services
-4. Optimize settings to reduce footprint and improve performance
+4. Optimize blueprints to reduce footprint and improve performance
