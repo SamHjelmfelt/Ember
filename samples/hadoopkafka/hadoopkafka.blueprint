@@ -1,0 +1,79 @@
+{
+    "configurations" : [
+    {
+      "yarn-site" : {
+        "properties" : {
+          "yarn.nodemanager.container-executor.class" : "org.apache.hadoop.yarn.server.nodemanager.LinuxContainerExecutor",
+          "yarn.nodemanager.runtime.linux.docker.default-container-network" : "amber",
+          "yarn.nodemanager.runtime.linux.docker.allowed-container-networks" : "host,none,bridge,amber",
+          "yarn.nodemanager.linux-container-executor.nonsecure-mode.local-user" : "ambari-qa"
+        }
+      }
+    },
+    {
+      "container-executor" : {
+        "properties" : {
+          "docker_trusted_registries" : "*",
+          "docker_module_enabled" : "true",
+          "docker_binary" : "/opt/dockerwrapper.sh"
+        }
+      }
+    },
+    {
+      "hadoop-env" : {
+        "properties" : {
+          "hadoop_heapsize" : "512",
+          "dtnode_heapsize" : "512m",
+          "namenode_heapsize" : "512m"
+        }
+      }
+    },
+    {
+      "yarn-env" : {
+        "properties" : {
+            "yarn_heapsize" : "512",
+            "apptimelineserver_heapsize" : "512",
+            "resourcemanager_heapsize" : "512",
+            "nodemanager_heapsize" : "512"
+        }
+      }
+    },
+    {
+      "zookeeper-env" : {
+        "properties" : {
+          "zk_server_heapsize" : "512m"
+        }
+      }
+    }],
+    "host_groups" : [
+        {
+            "name" : "all",
+            "components" : [
+                {"name" : "ZOOKEEPER_SERVER"},
+
+                {"name" : "NAMENODE"},
+                {"name" : "SECONDARY_NAMENODE"},
+                {"name" : "DATANODE"},
+
+                {"name" : "HISTORYSERVER"},
+                {"name" : "RESOURCEMANAGER"},
+                {"name" : "APP_TIMELINE_SERVER"},
+                {"name" : "YARN_REGISTRY_DNS"},
+                {"name" : "NODEMANAGER"},
+
+                {"name" : "KAFKA_BROKER"},
+
+                {"name" : "ZOOKEEPER_CLIENT"},
+                {"name" : "HDFS_CLIENT"},
+                {"name" : "MAPREDUCE2_CLIENT"},
+                {"name" : "YARN_CLIENT"}
+            ],
+            "cardinality" : "1"
+        }
+    ],
+    "Blueprints" : {
+        "blueprint_name" : "hadoopkafka",
+        "stack_name" : "HDP",
+        "stack_version" : "STACKVERSION"
+    }
+}

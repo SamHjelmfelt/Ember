@@ -4,16 +4,23 @@ Amber provides a solution for running Ambari cluster in Docker. It was designed 
 ## Update January 9, 2019
 1. Workarounds to support Docker on YARN (in Docker)
 2. Ports can now be configured in ini file
+3. More samples
 
 ## Update December 10, 2018
 1. Pre-built images can now be pulled from docker hub
 
-## NEW: Quickstart
-Pre-built versions of the yarnquickstart and nifi samples have been loaded into docker hub. They are additional 3-5 GB downloads on top of the ambari server image.
+## Pre-built Images
+Pre-built versions of the single node samples have been loaded into docker hub. They can be configured with their respective ini files and launched with the following commands: 
 ```
 ./amber.sh createFromPrebuiltSample samples/yarnquickstart/yarnquickstart-sample.ini
+./amber.sh createFromPrebuiltSample samples/hadoopkafka/hadoopkafka-sample.ini
+./amber.sh createFromPrebuiltSample samples/hivespark/hivespark-sample.ini
 ./amber.sh createFromPrebuiltSample samples/nifiNode/nifiNode-sample.ini
 ```
+Docker images are composed of layers that can be shared by other images. This allows for a great reduction in the total size of images on disk and over the network. Amber's pre-built images are composed as much as possible to take advantage of this feature. 
+
+The following graph shows how the images built on top of each other. For example, Amber_Agent + Amber_Server + YarnQuickstart + HadoopKafka is a total of 5.44 GB in size, but all four layers are less than 3GB each and each can be reused for other containers.
+![Image Sizes](ImageSizes.png)
 
 ## Prerequisites
 * 8GB RAM and 30GB disk is recommended for the threeNode sample configuration. 4GB RAM or less is viable for smaller clusters.
@@ -65,7 +72,7 @@ HDP can be installed manually or through Ambari Blueprints. Example blueprint fi
 * blueprintName (required to use blueprint script)
 * blueprintFile (required to use blueprint script)
 * blueprintHostMappingFile (required to use blueprint script) 
-* mPacks (Optional, comma separated list of mPacks to include in the docker images)
+* mPacks (Optional, comma separated list of mPack URLs)
 * buildRepo=true (Optional, creates a container with a local yum repo for HDP) 
 
 Note: The HDP build number must be specified. It can be found in the HDP repo path (e.g. https://docs.hortonworks.com/HDPDocuments/Ambari-2.7.1.0/bk_ambari-installation-ppc/content/hdp_30_repositories.html).

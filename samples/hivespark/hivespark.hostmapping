@@ -1,11 +1,11 @@
 {
-  "blueprint":"singlenode",
+  "blueprint":"hivespark",
   "default_password":"admin",
   "repository_version": "REPOSITORYVERSION",
   "host_groups":[
     { 
       "name":"all",
-      "hosts":[ { "fqdn":"namenode.singlenode" } ]
+      "hosts":[ { "fqdn":"resourcemanager.hivespark" } ]
     }
   ]
 }
