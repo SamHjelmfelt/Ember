@@ -28,13 +28,11 @@ RUN echo "root:hadoop" | chpasswd
 RUN sed -i "/\[main\]/a timeout=1800" /etc/yum.conf
 RUN sed -i "/\[main\]/a retries=10" /etc/yum.conf
 
-# Configure the Ambari Repository
-RUN wget 'http://public-repo-1.hortonworks.com/ambari/centos7/'${managerVersion:0:1}'.x/updates/'$managerVersion'/ambari.repo' -O '/etc/yum.repos.d/ambari.repo'
+# Configure the Cloudera Manager Repository
+RUN wget "https://archive.cloudera.com/cm${managerVersion:0:1}/${managerVersion}/redhat7/yum/cloudera-manager.repo" -P /etc/yum.repos.d/
+RUN rpm --import "https://archive.cloudera.com/cm${managerVersion:0:1}/${managerVersion}/redhat7/yum/RPM-GPG-KEY-cloudera"
 
-RUN yum install ambari-agent -y
-
-# Python SSL issues...https://community.hortonworks.com/questions/121978/openssl-compatibility.html?childToView=138080#answer-138080
-RUN sed -i -e $'s/\[security\]/\[security\]\\nforce_https_protocol=PROTOCOL_TLSv1_2/g' /etc/ambari-agent/conf/ambari-agent.ini
+RUN yum install cloudera-manager-agent cloudera-manager-daemons -y
 
 # Copy startup script
 ADD startup.sh /root/

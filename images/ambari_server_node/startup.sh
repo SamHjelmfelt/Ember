@@ -6,12 +6,12 @@ find /var/lib/ambari-server/resources/stacks/ -name metainfo.xml | while read fi
   sed -i "/<timeout>.*<\/timeout>/c\<timeout>3000<\/timeout>" $file 
 done
 
-sed -i "s/localhost/$AMBARI_SERVER/g" /etc/ambari-agent/conf/ambari-agent.ini
+sed -i "s/localhost/$MASTER_SERVER/g" /etc/ambari-agent/conf/ambari-agent.ini
 
 ambari-server setup -s -v --java-home $JAVA_HOME
 ambari-server start
 
-while [ `curl -o /dev/null --silent --head --write-out '%{http_code}\n' http://${AMBARI_SERVER}:8080` != 200 ]; do
+while [ `curl -o /dev/null --silent --head --write-out '%{http_code}\n' http://${MASTER_SERVER}:8080` != 200 ]; do
   sleep 2
 done
 

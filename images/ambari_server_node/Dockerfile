@@ -1,5 +1,5 @@
-ARG ambariVersion
-FROM samhjelmfelt/amber_agent_node:$ambariVersion
+ARG managerVersion
+FROM samhjelmfelt/ember_ambari_agent_node:$managerVersion
 
 ARG mPacks=""
 
