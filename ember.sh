@@ -10,6 +10,7 @@ networkName="ember"
 
 function printUsage() {
   echo "Usage:"
+  echo "  $0 runRepo                  <configuration.ini>"
   echo "  $0 pullImages               <configuration.ini>"
   echo "  $0 buildImages              <configuration.ini>"
   echo "  $0 createCluster            <configuration.ini>"
@@ -80,6 +81,32 @@ else
     serverImageName="samhjelmfelt/ember_ambari_server_node:$managerVersion"
     agentImageName="samhjelmfelt/ember_ambari_agent_node:$managerVersion"
 fi
+function runRepo(){
+    if [ -z "$ambari" ]; then
+        echo "Local repos are not supported for CM-based clusters at this time"
+        exit 1;
+    fi
+    docker network ls | grep $networkName
+    if [ $? -ne 0 ]; then
+      docker network create $networkName
+      echo "Created $networkName network"
+    fi
+
+    echo "Starting local repo for HDP $clusterVersion"
+    docker run --privileged=true \
+                --security-opt seccomp:unconfined \
+                --cap-add=SYS_ADMIN \
+                --dns 8.8.8.8 \
+                --name $repoNodeContainerName \
+                -h $repoNodeContainerName \
+                --net $networkName \
+                --restart unless-stopped \
+                -itd \
+                $repoNodeImageName  \
+        ||
+    docker start $repoNodeContainerName
+    docker network connect bridge $repoNodeContainerName
+}
 
 function pullImages(){
     docker network ls | grep $networkName
@@ -96,21 +123,9 @@ function pullImages(){
           exit 1;
       fi
 
-      echo "Pulling and starting local repo for HDP $clusterVersion"
+      echo "Pulling local repo image for HDP $clusterVersion"
       docker pull $repoNodeImageName
-      docker run --privileged=true \
-                  --security-opt seccomp:unconfined \
-                  --cap-add=SYS_ADMIN \
-                  --dns 8.8.8.8 \
-                  --name $repoNodeContainerName \
-                  -h $repoNodeContainerName \
-                  --net $networkName \
-                  --restart unless-stopped \
-                  -itd \
-                  $repoNodeImageName  \
-          ||
-      docker start $repoNodeContainerName
-      docker network connect bridge $repoNodeContainerName
+      runRepo
     fi
     docker pull $agentImageName
     docker pull $serverImageName
@@ -129,27 +144,9 @@ function buildImages(){
                         --build-arg clusterVersion=$clusterVersion \
                         -t $repoNodeImageName \
                         images/hdp_repo_node
+            runRepo
         fi
-        docker network ls | grep $networkName
-        if [ $? -ne 0 ]; then
-          docker network create $networkName
-          echo "Created $networkName network"
-        fi
-        docker run --privileged=true \
-                    --security-opt seccomp:unconfined \
-                    --cap-add=SYS_ADMIN \
-                    --dns 8.8.8.8 \
-                    --name $repoNodeContainerName \
-                    -h $repoNodeContainerName \
-                    --net $networkName \
-                    --restart unless-stopped \
-                    -itd \
-                    $repoNodeImageName  \
-            ||
-        docker start $repoNodeContainerName
-        docker network connect bridge $repoNodeContainerName
     fi
-
 
     if [ -z "$ambari" ]; then
         echo "Creating CM $managerVersion images"
@@ -261,7 +258,7 @@ function installCluster(){
     majorversion=${clusterVersion:0:1}
 
 
-    if [ -z $ambari ]; then
+    if [ -z "$ambari" ]; then
         docker exec -it $managerServerHostName bash -c "curl -X POST -H 'Content-Type: application/json' -d '$(cat "$templateFile")' \
             http://admin:admin@localhost:7180/api/v12/cm/importClusterTemplate"
         port=7180
@@ -270,12 +267,9 @@ function installCluster(){
             -o "HDP-${clusterVersion}.xml"
 
         if [ ! -z $repoIP ]; then
-            hdpUtilsVersion=$(curl "http://$repoIP/hdp/"  &> /dev/stdout | egrep -o 'HDP-UTILS-[\.0-9]*' | head -n1 | cut -c11-)
-
-            #update repo URL
-            sed -i "s#http://public-repo-1.hortonworks.com/HDP/centos7/${majorversion}.x/updates/$baseVersion#http://$repoIP/hdp/HDP-$baseVersion/#g" HDP-${clusterVersion}.xml
-            sed -i "s#http://public-repo-1.hortonworks.com/HDP-GPL/centos7/${majorversion}.x/updates/$baseVersion#http://$repoIP/hdp/HDP-GPL-$baseVersion/#g" HDP-${clusterVersion}.xml
-            sed -i "s#http://public-repo-1.hortonworks.com/HDP-UTILS-$hdpUtilsVersion/repos/centos7#http://$repoIP/hdp/HDP-UTILS-$hdpUtilsVersion/#g" HDP-${clusterVersion}.xml
+            sed -i "" "s#http://public-repo-1.hortonworks.com/HDP/centos7/${majorversion}.x/updates/$baseVersion#http://$repoIP/hdp/HDP-$baseVersion/#g" "HDP-${clusterVersion}.xml"
+            sed -i "" "s#http://public-repo-1.hortonworks.com/HDP-GPL/centos7/${majorversion}.x/updates/$baseVersion#http://$repoIP/hdp/HDP-GPL-$baseVersion/#g" "HDP-${clusterVersion}.xml"
+            sed -i "" "s#http://public-repo-1.hortonworks.com/HDP-UTILS-\([0-9\.]*\)/repos/centos7#http://$repoIP/hdp/HDP-UTILS-\1/#g" "HDP-${clusterVersion}.xml"
         fi
 
         docker cp HDP-${clusterVersion}.xml $managerServerHostName:/version_definitions_HDP-${clusterVersion}.xml
@@ -387,6 +381,10 @@ function createFromPrebuiltSample(){
 }
 
 case "$1" in
+
+  runRepo)
+      runRepo
+      ;;
   pullImages)
       pullImages
       ;;

@@ -1,0 +1,11 @@
+{
+  "blueprint":"druidkafka",
+  "default_password":"admin",
+  "repository_version": "REPOSITORYVERSION",
+  "host_groups":[
+    { 
+      "name":"all",
+      "hosts":[ { "fqdn":"node1.druidkafka" } ]
+    }
+  ]
+}

@@ -1,0 +1,136 @@
+{
+    "configurations" : [
+    {
+      "yarn-site" : {
+        "properties" : {
+          "yarn.nodemanager.container-executor.class" : "org.apache.hadoop.yarn.server.nodemanager.LinuxContainerExecutor",
+          "yarn.nodemanager.runtime.linux.docker.default-container-network" : "ember",
+          "yarn.nodemanager.runtime.linux.docker.allowed-container-networks" : "host,none,bridge,ember",
+          "yarn.nodemanager.linux-container-executor.nonsecure-mode.local-user" : "ambari-qa"
+        }
+      }
+    },
+    {
+      "container-executor" : {
+        "properties" : {
+          "docker_trusted_registries" : "*",
+          "docker_module_enabled" : "true",
+          "docker_binary" : "/opt/dockerwrapper.sh"
+        }
+      }
+    },
+    {
+      "hadoop-env" : {
+        "properties" : {
+          "hadoop_heapsize" : "512",
+          "dtnode_heapsize" : "512m",
+          "namenode_heapsize" : "512m"
+        }
+      }
+    },
+    {
+      "yarn-env" : {
+        "properties" : {
+            "yarn_heapsize" : "512",
+            "apptimelineserver_heapsize" : "512",
+            "resourcemanager_heapsize" : "512",
+            "nodemanager_heapsize" : "512"
+        }
+      }
+    },
+    {
+      "zookeeper-env" : {
+        "properties" : {
+          "zk_server_heapsize" : "512m"
+        }
+      }
+    },
+    {
+      "druid-common" : {
+        "properties" : {
+          "druid.metadata.storage.type" : "derby",
+          "druid.metadata.storage.connector.connectURI": "jdbc:derby://localhost:1527/druid;create=true"
+        }
+      }
+    },
+    {
+      "druid-broker" : {
+        "properties" : {
+          "druid.cache.sizeInBytes" : "262144",
+          "druid.processing.buffer.sizeBytes" : "262144"
+        }
+      }
+    },
+    {
+      "druid-middlemanager" : {
+        "properties" : {
+          "druid.indexer.runner.javaOpts" : "-server -Xmx256m -Duser.timezone=UTC -Dfile.encoding=UTF-8 -Djava.util.logging.manager=org.apache.logging.log4j.jul.LogManager -Dhdp.version={stack_version} -Dhadoop.mapreduce.job.classloader=true -Djava.security.auth.login.config={druid_jaas_file}",
+          "druid.processing.buffer.sizeBytes" : "262144"
+        }
+      }
+    },
+    {
+      "druid-historical" : {
+        "properties" : {
+          "druid.processing.buffer.sizeBytes" : "262144",
+          "druid.server.maxSize" : "3000000000"
+        }
+      }
+    },
+    {
+      "druid-env" : {
+        "properties" : {
+          "druid.historical.jvm.direct.memory" : "262144",
+          "druid.coordinator.jvm.heap.memory" : "256",
+          "druid.overlord.jvm.direct.memory" : "262144",
+          "druid.overlord.jvm.heap.memory" : "256",
+          "druid.router.jvm.heap.memory" : "256",
+          "druid.router.jvm.direct.memory" : "262144",
+          "druid.historical.jvm.heap.memory" : "256",
+          "druid.coordinator.jvm.direct.memory" : "262144",
+          "druid.broker.jvm.heap.memory" : "256",
+          "druid.broker.jvm.direct.memory" : "262144",
+          "druid.middlemanager.jvm.heap.memory" : "256",
+          "druid.middlemanager.jvm.direct.memory" : "262144"
+        }
+      }
+    }],
+    "host_groups" : [
+        {
+            "name" : "all",
+            "components" : [
+                {"name" : "ZOOKEEPER_SERVER"},
+
+                {"name" : "NAMENODE"},
+                {"name" : "SECONDARY_NAMENODE"},
+                {"name" : "DATANODE"},
+
+                {"name" : "HISTORYSERVER"},
+                {"name" : "RESOURCEMANAGER"},
+                {"name" : "APP_TIMELINE_SERVER"},
+                {"name" : "YARN_REGISTRY_DNS"},
+                {"name" : "NODEMANAGER"},
+
+                {"name" : "KAFKA_BROKER"},
+
+                {"name" : "DRUID_MIDDLEMANAGER"},
+                {"name" : "DRUID_COORDINATOR"},
+                {"name" : "DRUID_ROUTER"},
+                {"name" : "DRUID_HISTORICAL"},
+                {"name" : "DRUID_BROKER"},
+                {"name" : "DRUID_OVERLORD"},
+
+                {"name" : "ZOOKEEPER_CLIENT"},
+                {"name" : "HDFS_CLIENT"},
+                {"name" : "MAPREDUCE2_CLIENT"},
+                {"name" : "YARN_CLIENT"}
+            ],
+            "cardinality" : "1"
+        }
+    ],
+    "Blueprints" : {
+        "blueprint_name" : "druidkafka",
+        "stack_name" : "HDP",
+        "stack_version" : "STACKVERSION"
+    }
+}

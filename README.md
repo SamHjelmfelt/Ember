@@ -12,8 +12,18 @@ Ember provides a solution for running Ambari and Cloudera Manager clusters in Do
 Pre-built versions of the single node samples have been loaded into docker hub. They can be configured with their respective ini files and launched with the following commands: 
 ```
 ./ember.sh createFromPrebuiltSample samples/yarnquickstart/yarnquickstart-sample.ini
+./ember.sh createFromPrebuiltSample samples/hadoopkafka/hadoopkafka-sample.ini
+./ember.sh createFromPrebuiltSample samples/druidkafka/druidkafka-sample.ini
+./ember.sh createFromPrebuiltSample samples/hivespark/hivespark-sample.ini
+./ember.sh createFromPrebuiltSample samples/nifiNode/nifiNode-sample.ini
+./ember.sh createFromPrebuiltSample samples/cm_essentials/essentials-sample.ini
 ```
 Docker images are composed of layers that can be shared by other images. This allows for a great reduction in the total size of images on disk and over the network. Ember's pre-built images are composed as much as possible to take advantage of this feature. 
+
+The following diagram shows how the images built on top of each other. For example, Ambari Agent + Ambari Server + YarnQuickstart + HadoopKafka + DruidKafka is a total of 6.09 GB in size, but all five layers are less than 3GB each and each can be reused independently or for other containers.
+
+![Image Sizes](ImageSizes.png)
+
 
 ## Prerequisites
 * 8GB RAM and 30GB disk is recommended for the threeNode sample configuration. 4GB RAM or less is viable for smaller clusters.
