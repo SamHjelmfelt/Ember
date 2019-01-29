@@ -69,7 +69,7 @@ HDP/HDF and CDH can be installed manually or through Ambari Blueprints/CM templa
 | clusterName | Required |
 | managerServerHostName | Required |
 | hostNames | Required |
-| ports | Optional. Comma separated list of ports to bind. Additionally, the format "hostPort:containerPort" can be used to map a container port to a different port on the host) (Default: all HDP and HDF ports) |
+| ports | Optional. Comma separated list of ports to bind on the Ambari/CM server container. Alternatively, the format "hostPort:containerPort" can be used to map a container port to a different port on the host (Default: all HDP and HDF ports) |
 | externalIPs | Optional. Only necessary for access from outside the host machine |
 | managerVersion | Required |
 | clusterVersion | Required to use cluster install script. For Ambari, HDP build number must be specified. It can be found in the HDP repo path. |
@@ -79,28 +79,10 @@ HDP/HDF and CDH can be installed manually or through Ambari Blueprints/CM templa
 | blueprintName | Required to use cluster install script |
 | blueprintFile | Required to use cluster install script |
 | blueprintHostMappingFile | Required to use cluster install script |
-| buildRepo=true | Optional. Creates a container with a local yum repo for HDP |
 | **Cloudera Manager Clusters:** | |
 | templateFile | Required to use cluster install script |
 
 Note: mPacks and local repos are not supported for Cloudera-Manager-based clusters
-
-
-## Docker images
-Ember has five docker images: one for HDP repos, two for Ambari, and two for Cloudera Manager. Ambari, CM, CDH, and HDP versions are configurable, and multiple versions can exist on the same host. Ambari mPacks (such as for HDF or HDPSearch) are also configurable.
-
-1. **HDP Repo Image (Optional)** This container installs and runs a local HDP repo. Creating this image will take time initially, but will greatly speed up all future HDP installs.
-2. **Ambari Server Image:** This container installs and runs the Ambari Server and Ambari Agent. If mPacks are defined, they will be installed into Ambari Server as well.
-3. **Ambari Agent Image:** This container runs an Ambari Agent process. For multi-node cluster deployments, all nodes except the node designated as the Ambari Server node will be based on this image.
-4. **Cloudera Manager Server Image:** This container installs and runs the CM Server and CM Agent.
-5. **Cloudera Manager Agent Image:** This container runs the CM Agent process. For multi-node cluster deployments, all nodes except the node designated as the CM Server node will be based on this image.
-
-Both the pullImages and buildImages are configured using a cluster ini file. This is where Ambari vs. CM and versions are set.
-```
-./ember.sh pullImages samples/yarnquickstart/yarnquickstart-sample.ini
-or
-./ember.sh buildImages samples/yarnquickstart/yarnquickstart-sample.ini
-```
 
 ## Creating a Cluster
 A blank Ambari/Cloudera Manager cluster is the starting point:
@@ -120,51 +102,71 @@ To use blueprints or templates, add the appropriate fields to the ini file and r
 ## Supporting Files/Scripts
 This project includes several additional utility methods: 
 
-1. **Install Status:** Monitor the status of a cluster install (the management UI can also be used). Not supported for CM-based clusters.
+1. **Run Repo:** Runs a container with a local repo for the specified HDP version. Greatly improves cluster install times. Not supported for CM-based clusters.
+
+    ```
+    ./ember.sh runRepo samples/yarnquickstart/yarnquickstart-sample.ini
+    ```
+2. **Install Status:** Monitor the status of a cluster install (the management UI can also be used). Not supported for CM-based clusters.
 
     ```
     ./ember.sh installStatus samples/yarnquickstart/yarnquickstart-sample.ini
     ```
 
-2. **Stats:** Monitor the resource utilization of a cluster based on the built-in `docker status` command
+3. **Stats:** Monitor the resource utilization of a cluster based on the built-in `docker status` command
         
     ```
     ./ember.sh stats samples/yarnquickstart/yarnquickstart-sample.ini
     ```
 
-3. **Create Node:** Create a new node. Note: does not install services or add to Ambari/Cloudera Manager
+4. **Create Node:** Create a new node. Note: does not install services or add the node to Ambari/Cloudera Manager
         
     ```
-    ./ember.sh createNode samples/yarnquickstart/yarnquickstart-sample.ini worker1 172.16.96.140
+    ./ember.sh createNode samples/yarnquickstart/yarnquickstart-sample.ini worker1
     ```
 
-4. **Export Blueprint:** Export blueprint from Ambari or template from Cloudera Manager
+5. **Export Cluster Definition:** Export blueprint from Ambari or template from Cloudera Manager
 
     ```
-    ./ember.sh exportBlueprint samples/yarnquickstart/yarnquickstart-sample.ini > blueprint.json
+    ./ember.sh exportClusterDefinition samples/yarnquickstart/yarnquickstart-sample.ini > blueprint.json
     ```
     
-5. **Stop Cluster:** Stop cluster preserving configuration
+6. **Stop Cluster:** Stop cluster preserving configuration
 
     ```
     ./ember.sh stopCluster samples/yarnquickstart/yarnquickstart-sample.ini
     ```
     
-6. **Start Cluster:** Restarts cluster (including all services) that was previously stopped
+7. **Start Cluster:** Restarts cluster (including all services) that was previously stopped
 
     ```
     ./ember.sh startCluster samples/yarnquickstart/yarnquickstart-sample.ini
     ```
     
-7. **Remove Cluster:** Completely remove all nodes from the cluster. Not reversible!
+8. **Remove Cluster:** Completely remove all nodes from the cluster. Not reversible!
 
     ```
     ./ember.sh removeCluster samples/yarnquickstart/yarnquickstart-sample.ini
     ```
+## Docker images
+Ember has five docker images: one for HDP repos, two for Ambari, and two for Cloudera Manager. Ambari, CM, CDH, and HDP versions are configurable, and multiple versions can exist on the same host. Ambari mPacks (such as for HDF or HDPSearch) are also configurable.
+
+1. **HDP Repo Image:** This container runs a local HDP repo. Creating this image will take time initially, but will greatly speed up future HDP installs.
+2. **Ambari Server Image:** This container runs Ambari Server and Ambari Agent. If mPacks are defined, they will be installed into Ambari Server as well.
+3. **Ambari Agent Image:** This container runs an Ambari Agent process. For multi-node cluster deployments, all nodes except the node designated as the Ambari Server node will be based on this image.
+4. **Cloudera Manager Server Image:** This container runs Cloudera Manager Server and Cloudera Manager Agent.
+5. **Cloudera Manager Agent Image:** This container runs the Cloudera Manager Agent process. For multi-node cluster deployments, all nodes except the node designated as the Cloudera Manager Server node will be based on this image.
+
+Both the pullImages and buildImages are configured using a cluster ini file. Both include the repo image if building/pulling Ambari images.
+```
+./ember.sh pullImages samples/yarnquickstart/yarnquickstart-sample.ini
+or
+./ember.sh buildImages samples/yarnquickstart/yarnquickstart-sample.ini
+```
 
 ## Notes
-1. A local repository will accelerate installs (only supported for Ambari-based clusters)
-2. When external IPs are not in use, the nodes can not be access via SSH. Instead use docker exec:
+1. A local repo will accelerate installs (only supported for Ambari-based clusters)
+2. When external IPs are not in use, the nodes can not be accessed via SSH. Instead use docker exec:
    ```
    docker exec -it resourcemanager.yarnquickstart bash
    ```
@@ -188,7 +190,7 @@ This project includes several additional utility methods:
 ## Potential Enhancements
 1. Additional samples
     - HA
-2. Local repo for Cloudera Manager
-3. Add Kerberos script
+2. Add Kerberos script
+3. Local repo for Cloudera Manager
 4. Add local repo for Ambari mPack services
 5. Optimize blueprints/templates to reduce footprint and improve performance

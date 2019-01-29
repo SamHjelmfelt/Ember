@@ -41,7 +41,6 @@ blueprintName=$(awk -F "=" '/blueprintName/ {print $2}' $iniFile)
 blueprintFile=$(awk -F "=" '/blueprintFile/ {print $2}' $iniFile)
 blueprintHostMappingFile=$(awk -F "=" '/blueprintHostMappingFile/ {print $2}' $iniFile)
 mPacks=$(awk -F "=" '/mPacks/ {print $2}' $iniFile)
-buildRepo=$(awk -F "=" '/buildRepo/ {print $2}' $iniFile)
 managerServerHostName=$(awk -F "=" '/managerServerHostName/ {print $2}' $iniFile).$clusterName
 managerServerInternalIP=$(docker inspect --format "{{ .NetworkSettings.Networks.$networkName.IPAddress }}" $managerServerHostName 2> /dev/null)
 portString=$(awk -F "=" '/ports/ {print $2}' $iniFile)
@@ -81,6 +80,7 @@ else
     serverImageName="samhjelmfelt/ember_ambari_server_node:$managerVersion"
     agentImageName="samhjelmfelt/ember_ambari_agent_node:$managerVersion"
 fi
+
 function runRepo(){
     if [ -z "$ambari" ]; then
         echo "Local repos are not supported for CM-based clusters at this time"
@@ -109,53 +109,28 @@ function runRepo(){
 }
 
 function pullImages(){
-    docker network ls | grep $networkName
-    if [ $? -ne 0 ]; then
-      docker network create $networkName
-      echo "Created $networkName network"
-    fi
-
-    if [ -z $buildRepo ]; then
-      echo "Not pulling local repo"
-    else
-      if [ -z "$ambari" ]; then
-          echo "Local repos are not supported for CM-based clusters at this time"
-          exit 1;
-      fi
-
-      echo "Pulling local repo image for HDP $clusterVersion"
-      docker pull $repoNodeImageName
-      runRepo
-    fi
     docker pull $agentImageName
     docker pull $serverImageName
+
+    if [ -z "$ambari" ]; then
+        echo "Local repos are not supported for CM-based clusters at this time"
+    else
+        echo "Pulling local repo image for HDP $clusterVersion"
+        docker pull $repoNodeImageName
+    fi
 }
 function buildImages(){
-
-    if [ -z $buildRepo ]; then
-        echo "Not creating local repo"
-    else
-        if [ -z "$ambari" ]; then
-            echo "Local repos are not supported for CM-based clusters at this time"
-            exit 1;
-        else
-            echo "Creating local repo for HDP $clusterVersion"
-            docker build \
-                        --build-arg clusterVersion=$clusterVersion \
-                        -t $repoNodeImageName \
-                        images/hdp_repo_node
-            runRepo
-        fi
-    fi
 
     if [ -z "$ambari" ]; then
         echo "Creating CM $managerVersion images"
         docker build --build-arg managerVersion=$managerVersion -t $agentImageName images/CM_agent_node
         docker build --build-arg managerVersion=$managerVersion -t $serverImageName --build-arg mPacks="$mPacks" images/CM_server_node
+        echo "Note: Local repos are not supported for CM-based clusters at this time"
     else
         echo "Creating Ambari $managerVersion images"
         docker build --build-arg managerVersion=$managerVersion -t $agentImageName images/ambari_agent_node
         docker build --build-arg managerVersion=$managerVersion -t $serverImageName --build-arg mPacks="$mPacks" images/ambari_server_node
+        docker build --build-arg clusterVersion=$clusterVersion -t $repoNodeImageName images/hdp_repo_node
     fi
 }
 function createNode(){
