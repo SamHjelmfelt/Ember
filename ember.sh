@@ -171,6 +171,7 @@ function createNode(){
     containerName="$nodeName.$clusterName"
     imageName=""
     YARN_DNS_IP=""
+    localPortParams=""
 
     if [ $containerName != $managerServerHostName ]; then
         echo "Creating agent node: $nodeName. Master server: $managerServerHostName"
@@ -180,15 +181,17 @@ function createNode(){
         echo "Creating server node: $nodeName"
         imageName=$serverImageName
         YARN_DNS_IP=127.0.0.1
-    fi
 
+        # Only map ports for server node to avoid conflicts
+        localPortParams="$portParams"
+    fi
+#--dns=$YARN_DNS_IP
     docker run --privileged \
                 --stop-signal=RTMIN+3 \
                 --restart unless-stopped \
-                $portParams \
+                $localPortParams \
                 --net $networkName \
                 --dns=8.8.8.8 \
-                --dns=$YARN_DNS_IP \
                 --name $containerName \
                 -h $containerName \
                 -e MASTER_SERVER=$managerServerHostName \

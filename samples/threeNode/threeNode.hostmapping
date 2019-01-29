@@ -4,16 +4,12 @@
   "repository_version": "REPOSITORYVERSION",
   "host_groups":[
     {
-      "name":"namenode",
-      "hosts":[ { "fqdn":"namenode.threenode" } ]
+      "name":"master",
+      "hosts":[ { "fqdn":"master1.threenode" } ]
     },
     {
-      "name":"resourcemanager",
-      "hosts":[ { "fqdn":"resourcemanager.threenode" } ]
-    },
-    {
-      "name":"hiveserver",
-      "hosts":[ { "fqdn":"hiveserver.threenode" } ]
+      "name":"worker",
+      "hosts":[ { "fqdn":"worker1.threenode" }, { "fqdn":"worker2.threenode" } ]
     }
   ]
 }

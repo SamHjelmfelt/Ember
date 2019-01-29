@@ -8,38 +8,21 @@
     ],
     "host_groups" : [
         {
-            "name" : "namenode",
+            "name" : "master",
             "components" : [
-                {"name" : "AMBARI_SERVER"},
-
                 {"name" : "NAMENODE"},
+                {"name" : "SECONDARY_NAMENODE"},
                 {"name" : "ZOOKEEPER_SERVER"},
-                {"name" : "NODEMANAGER"},
-                {"name" : "DATANODE"},
-
-                {"name" : "METRICS_MONITOR"},
-                {"name" : "METRICS_GRAFANA"},
-
-                {"name" : "PIG"},
-                {"name" : "SQOOP"},
-                {"name" : "HDFS_CLIENT"},
-                {"name" : "HIVE_CLIENT"},
-                {"name" : "ZOOKEEPER_CLIENT"},
-                {"name" : "TEZ_CLIENT"},
-                {"name" : "YARN_CLIENT"},
-                {"name" : "MAPREDUCE2_CLIENT"}
-            ],
-            "cardinality" : "1"
-        },
-        {
-            "name" : "resourcemanager",
-            "components" : [
                 {"name" : "HISTORYSERVER"},
                 {"name" : "APP_TIMELINE_SERVER"},
                 {"name" : "RESOURCEMANAGER"},
-                {"name" : "ZOOKEEPER_SERVER"},
-                {"name" : "NODEMANAGER"},
-                {"name" : "DATANODE"},
+                {"name" : "HIVE_SERVER"},
+                {"name" : "HIVE_METASTORE"},
+
+                {"name" : "METRICS_GRAFANA"},
+                {"name" : "METRICS_COLLECTOR"},
+
+                {"name" : "MYSQL_SERVER"},
 
                 {"name" : "METRICS_MONITOR"},
 
@@ -55,15 +38,8 @@
             "cardinality" : "1"
         },
         {
-            "name" : "hiveserver",
+            "name" : "worker",
             "components" : [
-                {"name" : "ZOOKEEPER_SERVER"},
-                {"name" : "HIVE_SERVER"},
-                {"name" : "SECONDARY_NAMENODE"},
-                {"name" : "TEZ_CLIENT"},
-                {"name" : "HIVE_METASTORE"},
-                {"name" : "METRICS_COLLECTOR"},
-                {"name" : "MYSQL_SERVER"},
                 {"name" : "NODEMANAGER"},
                 {"name" : "DATANODE"},
 
@@ -74,10 +50,11 @@
                 {"name" : "HDFS_CLIENT"},
                 {"name" : "HIVE_CLIENT"},
                 {"name" : "ZOOKEEPER_CLIENT"},
+                {"name" : "TEZ_CLIENT"},
                 {"name" : "YARN_CLIENT"},
                 {"name" : "MAPREDUCE2_CLIENT"}
             ],
-            "cardinality" : "1"
+            "cardinality" : "2"
         }
     ],
     "Blueprints" : {
