@@ -1,5 +1,5 @@
 # Ember
-Ember provides a solution for running Ambari and Cloudera Manager clusters in Docker (HDP, CDH, and HDF). It was designed to streamline training, testing, and development by enabling multi-node **dev/test** clusters to be installed on a single machine with minimal resource requirements. 
+Ember provides a solution for running Ambari and Cloudera Manager clusters in Docker (HDP, CDH, and HDF). It was designed to streamline training, testing, and development by enabling multi-node **dev/test** clusters to be installed on a single machine with minimal resource requirements.
 
 ## Update January 24, 2019
 1. Rebranding to Ember
@@ -9,7 +9,7 @@ Ember provides a solution for running Ambari and Cloudera Manager clusters in Do
 
 
 ## Pre-built Images
-Pre-built versions of the single node samples have been loaded into docker hub. They can be configured with their respective ini files and launched with the following commands: 
+Pre-built versions of the single node samples have been loaded into docker hub. They can be configured with their respective ini files and launched with the following commands:
 ```
 ./ember.sh createFromPrebuiltSample samples/yarnquickstart/yarnquickstart-sample.ini
 ./ember.sh createFromPrebuiltSample samples/hadoopkafka/hadoopkafka-sample.ini
@@ -18,7 +18,7 @@ Pre-built versions of the single node samples have been loaded into docker hub. 
 ./ember.sh createFromPrebuiltSample samples/nifiNode/nifiNode-sample.ini
 ./ember.sh createFromPrebuiltSample samples/cm_essentials/essentials-sample.ini
 ```
-Docker images are composed of layers that can be shared by other images. This allows for a great reduction in the total size of images on disk and over the network. Ember's pre-built images are composed as much as possible to take advantage of this feature. 
+Docker images are composed of layers that can be shared by other images. This allows for a great reduction in the total size of images on disk and over the network. Ember's pre-built images are composed as much as possible to take advantage of this feature.
 
 The following diagram shows how the images built on top of each other. For example, Ambari Agent + Ambari Server + YarnQuickstart + HadoopKafka + DruidKafka is a total of 6.09 GB in size, but all five layers are less than 3GB each and each can be reused independently or for other containers.
 
@@ -33,6 +33,8 @@ The following diagram shows how the images built on top of each other. For examp
     yum install -y yum-utils device-mapper-persistent-data lvm2
     yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
     yum install -y docker-ce
+    systemctl start docker
+    systemctl enable docker
     ```
 
 * (Optional) Configure for External Network Access to Nodes    
@@ -58,7 +60,7 @@ The following diagram shows how the images built on top of each other. For examp
       ```
 
 ## Configuration
-An .ini file is required to define hostnames and a cluster name. An external IP list can be defined to allow external access to the containers. 
+An .ini file is required to define hostnames and a cluster name. An external IP list can be defined to allow external access to the containers.
 
 HDP/HDF and CDH can be installed manually or through Ambari Blueprints/CM templates. Example blueprint and template files are provided in the samples folder.
 
@@ -91,7 +93,7 @@ A blank Ambari/Cloudera Manager cluster is the starting point:
 ```
 
 ## Installing Services
-Once the Ambari/Cloudera Manager cluster is created, the management UI or blueprints/templates can be used to install cluster services. 
+Once the Ambari/Cloudera Manager cluster is created, the management UI or blueprints/templates can be used to install cluster services.
 
 To use blueprints or templates, add the appropriate fields to the ini file and run the installCluster command. Sample blueprints and templates are provided in the samples directory.
 
@@ -100,7 +102,7 @@ To use blueprints or templates, add the appropriate fields to the ini file and r
 ```
 
 ## Supporting Files/Scripts
-This project includes several additional utility methods: 
+This project includes several additional utility methods:
 
 1. **Run Repo:** Runs a container with a local repo for the specified HDP version. Greatly improves cluster install times. Not supported for CM-based clusters.
 
@@ -114,13 +116,13 @@ This project includes several additional utility methods:
     ```
 
 3. **Stats:** Monitor the resource utilization of a cluster based on the built-in `docker status` command
-        
+
     ```
     ./ember.sh stats samples/yarnquickstart/yarnquickstart-sample.ini
     ```
 
 4. **Create Node:** Create a new node. Note: does not install services or add the node to Ambari/Cloudera Manager
-        
+
     ```
     ./ember.sh createNode samples/yarnquickstart/yarnquickstart-sample.ini worker1
     ```
@@ -130,19 +132,19 @@ This project includes several additional utility methods:
     ```
     ./ember.sh exportClusterDefinition samples/yarnquickstart/yarnquickstart-sample.ini > blueprint.json
     ```
-    
+
 6. **Stop Cluster:** Stop cluster preserving configuration
 
     ```
     ./ember.sh stopCluster samples/yarnquickstart/yarnquickstart-sample.ini
     ```
-    
+
 7. **Start Cluster:** Restarts cluster (including all services) that was previously stopped
 
     ```
     ./ember.sh startCluster samples/yarnquickstart/yarnquickstart-sample.ini
     ```
-    
+
 8. **Remove Cluster:** Completely remove all nodes from the cluster. Not reversible!
 
     ```
@@ -174,8 +176,8 @@ or
    ```
    docker exec -it resourcemanager.yarnquickstart bash -c "ambari-server stop; ambari-agent stop"
    docker exec -it resourcemanager.yarnquickstart bash -c "ambari-server start; ambari-agent start"
-   
-   
+
+
    docker exec -it node1.essentials bash -c "service cloudera-scm-server stop; service cloudera-scm-agent stop"
    docker exec -it node1.essentials bash -c "service cloudera-scm-server start; service cloudera-scm-agent start"
    ```
@@ -186,7 +188,7 @@ or
    systemctl enable docker
    ```
 7. Installing Oozie on HDP requires following these steps: https://docs.hortonworks.com/HDPDocuments/Ambari-2.7.3.0/managing-and-monitoring-ambari/content/amb_enable_the_oozie_ui.html
- 
+
 ## Potential Enhancements
 1. Additional samples
     - HA

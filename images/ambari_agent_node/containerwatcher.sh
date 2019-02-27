@@ -9,6 +9,8 @@
 #YARN behaves as expected with these two changes.
 sleep 10;
 status=$(docker -H "unix:///host/var/run/docker.sock" inspect --format={{.State.Status}} "$1")
+
 while [ "$status" == "running" ]; do
   sleep 1;
+  status=$(docker -H "unix:///host/var/run/docker.sock" inspect --format={{.State.Status}} "$1")
 done;
