@@ -6,7 +6,8 @@
           "yarn.nodemanager.container-executor.class" : "org.apache.hadoop.yarn.server.nodemanager.LinuxContainerExecutor",
           "yarn.nodemanager.runtime.linux.docker.default-container-network" : "ember",
           "yarn.nodemanager.runtime.linux.docker.allowed-container-networks" : "host,none,bridge,ember",
-          "yarn.nodemanager.linux-container-executor.nonsecure-mode.local-user" : "ambari-qa"
+          "yarn.nodemanager.linux-container-executor.nonsecure-mode.local-user" : "ambari-qa",
+          "yarn.scheduler.minimum-allocation-mb" : "256"
         }
       }
     },
@@ -35,6 +36,14 @@
             "apptimelineserver_heapsize" : "512",
             "resourcemanager_heapsize" : "512",
             "nodemanager_heapsize" : "512"
+        }
+      }
+    },
+    {
+      "capacity-scheduler" : {
+        "properties_attributes" : { },
+        "properties" : {
+          "yarn.scheduler.capacity.maximum-am-resource-percent" : "1"
         }
       }
     },

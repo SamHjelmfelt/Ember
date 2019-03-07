@@ -4,7 +4,7 @@ all_ports=(2181 3000 3372 3373 4040 6627 6700 6701 6702 6703 8010 8020 8025 8030
         53 8081 8088 8042 8141 9000 9080 9081 9082 9083 9084 9085 9086 9087 9999 9933 10000 10020 \
         11000 18080 19888 45454 50010 50020 50060 50070 50075 50090 50111 \
         9090 61080 6667 8744 8000 7788)
-       
+
 
 networkName="ember"
 
@@ -235,19 +235,27 @@ function installCluster(){
     stackversion=${clusterVersion:0:3}
     majorversion=${clusterVersion:0:1}
 
-
     if [ -z "$ambari" ]; then
         docker exec -it $managerServerHostName bash -c "curl -X POST -H 'Content-Type: application/json' -d '$(cat "$templateFile")' \
             http://admin:admin@localhost:7180/api/v12/cm/importClusterTemplate"
-        port=7180
+
+        echo "Cluster is currently installing"
+        echo "Go to http://$managerServerInternalIP:7180 or http://localhost:7180 to check progress"
     else
         curl "http://public-repo-1.hortonworks.com/HDP/centos7/${majorversion}.x/updates/$baseVersion/HDP-${clusterVersion}.xml" \
             -o "HDP-${clusterVersion}.xml"
 
         if [ ! -z $repoIP ]; then
+          #accomodate sed differences between linux and mac
+          if [ "$(uname)" = "Linux" ]; then
+            sed -i "s#http://public-repo-1.hortonworks.com/HDP/centos7/${majorversion}.x/updates/$baseVersion#http://$repoIP/hdp/HDP-$baseVersion/#g" "HDP-${clusterVersion}.xml"
+            sed -i "s#http://public-repo-1.hortonworks.com/HDP-GPL/centos7/${majorversion}.x/updates/$baseVersion#http://$repoIP/hdp/HDP-GPL-$baseVersion/#g" "HDP-${clusterVersion}.xml"
+            sed -i "s#http://public-repo-1.hortonworks.com/HDP-UTILS-\([0-9\.]*\)/repos/centos7#http://$repoIP/hdp/HDP-UTILS-\1/#g" "HDP-${clusterVersion}.xml"
+          else
             sed -i "" "s#http://public-repo-1.hortonworks.com/HDP/centos7/${majorversion}.x/updates/$baseVersion#http://$repoIP/hdp/HDP-$baseVersion/#g" "HDP-${clusterVersion}.xml"
             sed -i "" "s#http://public-repo-1.hortonworks.com/HDP-GPL/centos7/${majorversion}.x/updates/$baseVersion#http://$repoIP/hdp/HDP-GPL-$baseVersion/#g" "HDP-${clusterVersion}.xml"
             sed -i "" "s#http://public-repo-1.hortonworks.com/HDP-UTILS-\([0-9\.]*\)/repos/centos7#http://$repoIP/hdp/HDP-UTILS-\1/#g" "HDP-${clusterVersion}.xml"
+          fi
         fi
 
         docker cp HDP-${clusterVersion}.xml $managerServerHostName:/version_definitions_HDP-${clusterVersion}.xml
@@ -261,25 +269,33 @@ function installCluster(){
 
         #Install cluster
         hostMappingContent=`cat $blueprintHostMappingFile | sed "s/REPOSITORYVERSION/$clusterVersion/g"`;
-        docker exec -it $managerServerHostName bash -c "curl --user admin:admin -H 'X-Requested-By:Ember' -X POST http://localhost:8080/api/v1/clusters/$clusterName -d '$hostMappingContent'"
+        response=$(docker exec -it $managerServerHostName bash -c "curl --user admin:admin -H 'X-Requested-By:Ember' -X POST http://localhost:8080/api/v1/clusters/$clusterName -d '$hostMappingContent'")
+        echo response
 
-        port=8080
+        #wait for install complete
+        statusURL=$(echo "$response" | grep -o '"href" : [^, }]*' | sed 's/^.*: //' | tr -d '"')
+        status=""
+        while [[ "$status" != "COMPLETED" && "$status" != "FAILED" ]]; do
+            status=$(curl -s -u admin:admin -X GET "$statusURL"  | grep -o '"request_status" : [^, }]*' | sed 's/^.*: //' | tr -d '"')
+        done
+        if [ "$status" == "FAILED" ]; then
+            echo "Install failed"
+        else
+            echo "Install complete"
+        fi
     fi
-    echo ""
-    echo "Cluster is currently installing"
-    echo "Run scripts/installStatus.sh or go to http://$managerServerInternalIP:$port to check progress"
 }
 function installStatus(){
     while true
     do
-        curl -s --user admin:admin -H 'X-Requested-By:Ember' http://$managerServerInternalIP:8080/api/v1/clusters/$clusterName/requests/1 | grep request_status | grep IN_PROGRESS > /dev/null
+        curl -s -u admin:admin -H 'X-Requested-By:Ember' http://$managerServerInternalIP:8080/api/v1/clusters/$clusterName/requests/1 | grep request_status | grep IN_PROGRESS > /dev/null
 
         if [[ $? == 0 ]]; then
           #echo "Cluster is still installing..."
-          curl -s --user admin:admin -H 'X-Requested-By:Ember' http://$managerServerInternalIP:8080/api/v1/clusters/$clusterName/requests/1 | grep progress_percent
+          curl -s -u admin:admin -H 'X-Requested-By:Ember' http://$managerServerInternalIP:8080/api/v1/clusters/$clusterName/requests/1 | grep progress_percent
           #exit 0
         else
-            curl -s --user admin:admin -H 'X-Requested-By:Ember' http://$managerServerInternalIP:8080/api/v1/clusters/$clusterName/requests/1 | grep request_status
+            curl -s -u admin:admin -H 'X-Requested-By:Ember' http://$managerServerInternalIP:8080/api/v1/clusters/$clusterName/requests/1 | grep request_status
             exit 1
         fi
 
@@ -309,18 +325,29 @@ function startClusterServices(){
         echo "Starting Ambari..."
         docker exec -it $managerServerHostName bash -c "ambari-server start; ambari-agent start"
 
-        output=""
+        response=""
         echo "Waiting for agent heartbeat..."
-        while [[ ${output} != *"Accepted"* ]]; do
-            output=$(docker exec -it $managerServerHostName bash -c "curl -s -u admin:admin -H \"X-Requested-By: ember\"  -X PUT  \
+        while [[ ${response} != *"Accepted"* ]]; do
+            response=$(docker exec -it $managerServerHostName bash -c "curl -s -u admin:admin -H \"X-Requested-By: ember\"  -X PUT  \
                 -d '{\"RequestInfo\":{\"context\":\"_PARSE_.START.ALL_SERVICES\",\"operation_level\":{\"level\":\"CLUSTER\",\"cluster_name\":\"'$clusterName'\"}},\"Body\":{\"ServiceInfo\":{\"state\":\"STARTED\"}}}' \
                 \"http://localhost:8080/api/v1/clusters/$clusterName/services\"")
 
             sleep 1
         done
-        echo "Starting all services. Visit http://localhost:8080 to view the status"
-    fi
+        echo "Starting Cluster services..."
 
+        #wait for start to complete
+        statusURL=$(echo "$response" | grep -o '"href" : [^, }]*' | sed 's/^.*: //' | tr -d '"')
+        status=""
+        while [[ "$status" != "COMPLETED" && "$status" != "FAILED" ]]; do
+            status=$(curl -s -u admin:admin -X GET "$statusURL"  | grep -o '"request_status" : [^, }]*' | sed 's/^.*: //' | tr -d '"')
+        done
+        if [ "$status" == "FAILED" ]; then
+            echo "Start cluster services failed"
+        else
+            echo "Start cluster services complete"
+        fi
+    fi
 }
 
 function stats(){
